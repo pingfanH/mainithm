@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+# Reference projects, tracked in their own repositories.
+MaiConverter/
+sus-io/
