@@ -115,11 +115,15 @@ def parse_touch(s: str) -> dict:
 
 
 def parse_slide(start: int, modifier: str, tail: str) -> List[dict]:
-    """Parse a slide (and its chained ``*`` segments)."""
+    """Parse a slide (and its chained ``*`` segments).
+
+    ``*`` segments are "shared head" slides: they share the first segment's
+    star head, so they are marked ``headless``.
+    """
     slides: List[dict] = []
     segments = tail.split("*")
     inherit_duration = None
-    for seg in segments:
+    for idx, seg in enumerate(segments):
         if not seg:
             continue
         pattern = seg[0]
@@ -165,6 +169,7 @@ def parse_slide(start: int, modifier: str, tail: str) -> List[dict]:
             "equivalent_bpm": equivalent_bpm,
             "seconds": seconds,
             "modifier": seg_modifier,
+            "headless": idx > 0,
         })
     return slides
 
@@ -301,7 +306,8 @@ def parse_chart(chart_text: str, whole_bpm: Optional[float] = None) -> Chart:
                         measure=m, start=ev["start"], end=ev["end"],
                         duration=duration, pattern=ev["pattern"], delay=delay,
                         reflect=ev["reflect"],
-                        tapless=any(ch in ev["modifier"] for ch in "?$!"),
+                        tapless=(any(ch in ev["modifier"] for ch in "?$!")
+                                 or ev.get("headless", False)),
                     ))
                 elif et == "touch_tap":
                     chart.notes.append(TouchTap(m, ev["position"], ev["region"]))

@@ -65,14 +65,6 @@ def _touch_color_map(chart: Chart) -> Dict[int, str]:
     return color_map
 
 
-def _level_const(level: str) -> float:
-    s = str(level).replace("+", "").strip()
-    try:
-        return float(s)
-    except ValueError:
-        return 0.0
-
-
 def chart_to_ugc(chart: Chart, metadata: dict, level: str,
                  difficulty: int, songid: Optional[str] = None,
                  designer: str = "", wave: Optional[str] = None,
@@ -86,10 +78,10 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
     * slide -> star head TAP + AIR-HOLD on the startup beat, then SLIDE once
       the star starts moving (holdable ground slide).
     * touch (C/B/E/A/D) -> AIR-CRUSH (``C``, the "purple air" that shakes).
+      A single touch is purple; simultaneous touches get distinct colors.
     """
     title = metadata.get("title", "Untitled")
     artist = metadata.get("artist", "")
-    const = _level_const(level)
 
     lines: List[str] = []
     lines.append("' Created with simai_to_ugc")
@@ -102,7 +94,7 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
         lines.append(f"@DESIGN\t{designer}")
     lines.append(f"@DIFF\t{difficulty}")
     lines.append(f"@LEVEL\t{level}")
-    lines.append(f"@CONST\t{const:.5f}")
+    lines.append("@CONST\t0.00000")
     lines.append(f"@SONGID\t{songid or 'MuC-0'}")
     if wave:
         lines.append(f"@BGM\t{wave}")
@@ -144,12 +136,13 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
             ec = h36(button_lane(note.end))
             d_ticks = measure_to_tick(note.delay)
             m_ticks = measure_to_tick(note.duration)
-            # star head: tap + air hold (startup beat / prepare delay)
-            bar, tick = measure_to_bar_tick(note.measure)
-            block = [f"#{bar}'{tick}:t{sc}{w}", f"#{bar}'{tick}:H{sc}{w}N"]
-            if d_ticks > 0:
-                block.append(f"#{d_ticks}>s")
-            add_group(note.measure, block)
+            if not note.tapless:
+                # star head: tap + air hold (startup beat / prepare delay)
+                bar, tick = measure_to_bar_tick(note.measure)
+                block = [f"#{bar}'{tick}:t{sc}{w}", f"#{bar}'{tick}:H{sc}{w}N"]
+                if d_ticks > 0:
+                    block.append(f"#{d_ticks}>s")
+                add_group(note.measure, block)
             # star: holdable ground slide
             star = note.measure + note.delay
             bar, tick = measure_to_bar_tick(star)

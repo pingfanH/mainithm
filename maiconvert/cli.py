@@ -13,6 +13,7 @@ from typing import List, Optional
 from .simai import parse_chart, parse_maidata
 from .sus import chart_to_sus
 from .ugc import chart_to_ugc
+from .model import map_level
 
 DIFFICULTY_BY_INDEX = {
     "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 4, "7": 4,
@@ -107,7 +108,7 @@ def process_song(path: str, out_dir: str,
         ext = "ugc"
     for num in sorted(charts, key=lambda k: int(k)):
         chart = parse_chart(charts[num], whole_bpm)
-        level = metadata.get("levels", {}).get(num, "?")
+        level = map_level(metadata.get("levels", {}).get(num, "?"))
         difficulty = DIFFICULTY_BY_INDEX.get(num, 4)
         designer = designers.get(num) or designers.get("0") or ""
         out_text = generator(chart, metadata, level, difficulty, songid=songid,

@@ -213,7 +213,9 @@ def chart_to_sus(chart: Chart, metadata: dict, level: str,
         end_tick = measure_to_tick(move_start + slide.duration)
         channel = b36(slide_provider.get(start_tick, end_tick))
 
-        add_raw(start_tick, f"4{b36(button_lane(slide.start))}{channel}", f"1{b36(NOTE_WIDTH)}")
+        if not slide.tapless:
+            add_raw(start_tick, f"4{b36(button_lane(slide.start))}{channel}",
+                    f"1{b36(NOTE_WIDTH)}")
 
         waypoints = slide_waypoints(slide)
         for progress, position in waypoints:

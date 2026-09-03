@@ -84,6 +84,23 @@ def measure_to_bar_tick(measure: float) -> Tuple[int, int]:
     return bar, tick
 
 
+def map_level(level: str) -> str:
+    """Map a decimal simai level to a display level.
+
+    ``13.1`` -> ``13``, ``13.8`` -> ``13+`` (first decimal digit >= 6 bumps it).
+    A level without a decimal (or with an existing ``+``) is returned as-is.
+    """
+    s = str(level).strip()
+    if "." in s:
+        base, _, frac = s.partition(".")
+        base = base.rstrip("+")
+        first = frac[0] if frac else "0"
+        if first.isdigit() and int(first) >= 6:
+            return f"{base}+"
+        return base
+    return s
+
+
 # --------------------------------------------------------------------------- #
 # Note model
 # --------------------------------------------------------------------------- #
