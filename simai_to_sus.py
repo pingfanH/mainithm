@@ -76,6 +76,9 @@ LANE_OFFSET = 0  # rotate the whole circle by this many lanes
 # slide delay in measures (one beat at the current BPM)
 SLIDE_DELAY = 0.25
 
+# SUS note width (1..35); maimai notes are rendered two lanes wide here.
+NOTE_WIDTH = 2
+
 
 def button_lane(position: int) -> int:
     return (POSITION_TO_LANE[position] + LANE_OFFSET) % 16
@@ -590,7 +593,7 @@ def chart_to_sus(chart: Chart, metadata: dict, level: str,
 
     for tap in taps:
         add_raw(measure_to_tick(tap.measure), f"1{b36(button_lane(tap.position))}",
-                f"1{b36(1)}")
+                f"1{b36(NOTE_WIDTH)}")
 
     hold_providers: Dict[int, ChannelProvider] = {}
 
@@ -604,8 +607,8 @@ def chart_to_sus(chart: Chart, metadata: dict, level: str,
         end_tick = measure_to_tick(hold.measure + hold.duration)
         channel = hold_channel(lane, start_tick, end_tick)
         info = f"2{b36(lane)}{channel}"
-        add_raw(start_tick, info, f"1{b36(1)}")
-        add_raw(end_tick, info, f"2{b36(1)}")
+        add_raw(start_tick, info, f"1{b36(NOTE_WIDTH)}")
+        add_raw(end_tick, info, f"2{b36(NOTE_WIDTH)}")
 
     for touch in touches:
         lane = touch_lane(touch.region, touch.position)
@@ -614,10 +617,10 @@ def chart_to_sus(chart: Chart, metadata: dict, level: str,
             end_tick = measure_to_tick(touch.measure + touch.duration)
             channel = hold_channel(lane, start_tick, end_tick)
             info = f"2{b36(lane)}{channel}"
-            add_raw(start_tick, info, f"1{b36(1)}")
-            add_raw(end_tick, info, f"2{b36(1)}")
+            add_raw(start_tick, info, f"1{b36(NOTE_WIDTH)}")
+            add_raw(end_tick, info, f"2{b36(NOTE_WIDTH)}")
         else:
-            add_raw(measure_to_tick(touch.measure), f"1{b36(lane)}", f"1{b36(1)}")
+            add_raw(measure_to_tick(touch.measure), f"1{b36(lane)}", f"1{b36(NOTE_WIDTH)}")
 
     # Slide channels are global: a slide's notes span several lanes but share
     # one channel, so any two overlapping slides must get distinct channels.
@@ -628,16 +631,16 @@ def chart_to_sus(chart: Chart, metadata: dict, level: str,
         end_tick = measure_to_tick(move_start + slide.duration)
         channel = b36(slide_provider.get(start_tick, end_tick))
 
-        add_raw(start_tick, f"3{b36(button_lane(slide.start))}{channel}", f"1{b36(1)}")
+        add_raw(start_tick, f"3{b36(button_lane(slide.start))}{channel}", f"1{b36(NOTE_WIDTH)}")
 
         waypoints = slide_waypoints(slide)
         for progress, position in waypoints:
             if progress <= 0.0 or progress >= 1.0:
                 continue
             tick = measure_to_tick(move_start + progress * slide.duration)
-            add_raw(tick, f"3{b36(button_lane(position))}{channel}", f"3{b36(1)}")
+            add_raw(tick, f"3{b36(button_lane(position))}{channel}", f"3{b36(NOTE_WIDTH)}")
 
-        add_raw(end_tick, f"3{b36(button_lane(slide.end))}{channel}", f"2{b36(1)}")
+        add_raw(end_tick, f"3{b36(button_lane(slide.end))}{channel}", f"2{b36(NOTE_WIDTH)}")
 
     lines: List[str] = []
     _emit_metadata(lines, metadata, level, difficulty, songid, designer, wave, jacket)
