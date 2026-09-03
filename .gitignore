@@ -4,3 +4,30 @@ __pycache__/
 # Reference projects, tracked in their own repositories.
 MaiConverter/
 sus-io/
+
+# macOS
+.DS_Store
+
+# Editor state
+.miacode/
+
+# Generated chart output
+*.sus
+
+# Media assets (audio / video / image) - large and usually copyrighted
+*.mp3
+*.wav
+*.ogg
+*.flac
+*.m4a
+*.aac
+*.opus
+*.mp4
+*.mkv
+*.mov
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.bmp

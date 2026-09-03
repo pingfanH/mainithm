@@ -9,9 +9,17 @@ Format references
 
 Usage
 -----
-    python3 simai_to_sus.py maidata.txt [-o OUT_DIR]
+    python3 simai_to_sus.py maidata.txt [-o OUT_DIR]   # one chart set
+    python3 simai_to_sus.py songs_dir  [-o OUT_DIR]    # batch: scan every maidata.txt
 
-This produces one ``.sus`` file per chart (``&inote_N``) found in the input.
+For each chart (``&inote_N``) it emits a ``.sus`` file with ``#TITLE``,
+``#ARTIST``, per-difficulty ``#DESIGNER`` (``&des_N``), ``#PLAYLEVEL``,
+``#DIFFICULTY``, ``#SONGID``, ``#WAVE`` and ``#JACKET``.
+
+* ``#SONGID`` is ``genreid + "p"`` when ``&genreid`` is set, otherwise a random
+  alphabetic string.
+* ``#WAVE`` / ``#JACKET`` point to the audio and cover image found next to the
+  maidata.txt (``track.*`` and ``bg.*`` / ``jacket.*`` by default).
 
 Timing model
 ------------
@@ -38,8 +46,11 @@ Known limitations (documented on purpose)
 from __future__ import annotations
 
 import argparse
+import glob
 import math
 import os
+import random
+import string
 import sys
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
@@ -185,17 +196,21 @@ def parse_maidata(text: str) -> Tuple[dict, Dict[str, str]]:
             elif key == "&artist":
                 metadata["artist"] = value
             elif key.startswith("&des"):
-                metadata["designers"][key[4:] or "0"] = value
+                suffix = key[len("&des"):]
+                metadata["designers"][suffix[1:] if suffix.startswith("_") else "0"] = value
             elif key == "&wholebpm":
                 metadata["wholebpm"] = value
             elif key.startswith("&first"):
-                metadata["first"][key[6:] or "0"] = value
+                suffix = key[len("&first"):]
+                metadata["first"][suffix[1:] if suffix.startswith("_") else "0"] = value
             elif key.startswith("&lv_"):
                 metadata["levels"][key[4:]] = value
             elif key.startswith("&inote_"):
                 num = key[7:]
                 charts[num] = value
                 current_chart = num
+            elif key in ("&genreid", "&genre"):
+                metadata["genreid"] = value
             elif key == "&freemsg":
                 metadata["freemsg"] = value
         elif current_chart is not None and line:
@@ -513,11 +528,10 @@ def _loop_and_arc(start: int, end: int, direction: int, loop_steps: int) -> List
 # --------------------------------------------------------------------------- #
 
 def _emit_metadata(lines: List[str], metadata: dict, level: str, difficulty: int,
-                   songid: Optional[str]):
+                   songid: Optional[str], designer: str = "",
+                   wave: Optional[str] = None, jacket: Optional[str] = None):
     title = metadata.get("title", "Untitled")
     artist = metadata.get("artist", "")
-    designers = metadata.get("designers", {})
-    designer = designers.get("0") or designers.get("1") or ""
     lines.append(f'#TITLE "{title}"')
     if artist:
         lines.append(f'#ARTIST "{artist}"')
@@ -527,6 +541,10 @@ def _emit_metadata(lines: List[str], metadata: dict, level: str, difficulty: int
     lines.append(f"#DIFFICULTY {difficulty}")
     if songid:
         lines.append(f'#SONGID "{songid}"')
+    if wave:
+        lines.append(f'#WAVE "{wave}"')
+    if jacket:
+        lines.append(f'#JACKET "{jacket}"')
     lines.append("")
     lines.append(f"#00002: {BAR_LENGTH:g}")
     lines.append("")
@@ -547,7 +565,9 @@ class ChannelProvider:
 
 
 def chart_to_sus(chart: Chart, metadata: dict, level: str,
-                 difficulty: int, songid: Optional[str] = None) -> str:
+                 difficulty: int, songid: Optional[str] = None,
+                 designer: str = "", wave: Optional[str] = None,
+                 jacket: Optional[str] = None) -> str:
     raws: Dict[Tuple[int, str], Dict[int, str]] = {}
 
     def add_raw(tick: int, info: str, data: str):
@@ -620,7 +640,7 @@ def chart_to_sus(chart: Chart, metadata: dict, level: str,
         add_raw(end_tick, f"3{b36(button_lane(slide.end))}{channel}", f"2{b36(1)}")
 
     lines: List[str] = []
-    _emit_metadata(lines, metadata, level, difficulty, songid)
+    _emit_metadata(lines, metadata, level, difficulty, songid, designer, wave, jacket)
 
     for key, value in bpm_ids.items():
         lines.append(f"#BPM{value}: {key:g}")
@@ -655,22 +675,52 @@ DIFFICULTY_BY_INDEX = {
     "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 4, "7": 4,
 }
 
+AUDIO_EXTS = {".mp3", ".wav", ".ogg", ".flac", ".m4a", ".aac", ".opus"}
+IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
+WAVE_NAMES = ["track.mp3", "track.wav", "track.ogg", "music.mp3", "audio.mp3",
+              "bgm.mp3"]
+JACKET_NAMES = ["bg.png", "bg.jpg", "bg.jpeg", "jacket.png", "jacket.jpg",
+                "cover.png", "cover.jpg"]
 
-def main(argv: Optional[List[str]] = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="Convert a maimai simai chart (maidata.txt) to SUS format.")
-    parser.add_argument("input", help="path to maidata.txt")
-    parser.add_argument("-o", "--output", default=None,
-                        help="output directory (default: alongside input)")
-    parser.add_argument("--songid", default=None, help="optional #SONGID value")
-    args = parser.parse_args(argv)
 
-    with open(args.input, "r", encoding="utf-8") as f:
+def generate_songid(metadata: dict) -> str:
+    """Build a #SONGID: ``genreid`` + ``p`` when present, else random letters."""
+    genreid = (metadata.get("genreid") or "").strip()
+    if genreid:
+        return f"{genreid}p"
+    return "".join(random.choice(string.ascii_uppercase) for _ in range(8))
+
+
+def _find_file(directory: str, preferred: List[str],
+               extensions: set) -> Optional[str]:
+    try:
+        entries = os.listdir(directory)
+    except OSError:
+        return None
+    lower = {name.lower(): name for name in entries}
+    for name in preferred:
+        if name in lower:
+            return lower[name]
+    for name in sorted(entries):
+        if os.path.splitext(name.lower())[1] in extensions:
+            return name
+    return None
+
+
+def find_wave(directory: str) -> Optional[str]:
+    return _find_file(directory, WAVE_NAMES, AUDIO_EXTS)
+
+
+def find_jacket(directory: str) -> Optional[str]:
+    return _find_file(directory, JACKET_NAMES, IMAGE_EXTS)
+
+
+def process_song(path: str, out_dir: str,
+                 songid_override: Optional[str]) -> int:
+    with open(path, "r", encoding="utf-8") as f:
         text = f.read()
-
     metadata, charts = parse_maidata(text)
-    out_dir = args.output or os.path.dirname(os.path.abspath(args.input))
-    os.makedirs(out_dir, exist_ok=True)
+    songdir = os.path.dirname(os.path.abspath(path))
 
     title = metadata.get("title", "untitled")
     whole_bpm = None
@@ -680,22 +730,72 @@ def main(argv: Optional[List[str]] = None) -> int:
         except ValueError:
             whole_bpm = None
 
+    songid = songid_override or generate_songid(metadata)
+
+    wave = find_wave(songdir)
+    jacket = find_jacket(songdir)
+    wave_rel = os.path.relpath(os.path.join(songdir, wave), out_dir) if wave else None
+    jacket_rel = (os.path.relpath(os.path.join(songdir, jacket), out_dir)
+                  if jacket else None)
+
+    os.makedirs(out_dir, exist_ok=True)
+    safe_title = "".join(c if c.isalnum() or c in "-_" else "_"
+                         for c in title).strip("_") or "untitled"
+
+    print(f"[{title}] songid={songid} wave={wave} jacket={jacket}")
+
     written = 0
+    designers = metadata.get("designers", {})
     for num in sorted(charts, key=lambda k: int(k)):
         chart = parse_chart(charts[num], whole_bpm)
         level = metadata.get("levels", {}).get(num, "?")
         difficulty = DIFFICULTY_BY_INDEX.get(num, 4)
-        sus = chart_to_sus(chart, metadata, level, difficulty, args.songid)
-        safe_title = "".join(c if c.isalnum() or c in "-_" else "_"
-                             for c in title).strip("_") or "untitled"
+        designer = designers.get(num) or designers.get("0") or ""
+        sus = chart_to_sus(chart, metadata, level, difficulty, songid=songid,
+                           designer=designer, wave=wave_rel, jacket=jacket_rel)
         out_path = os.path.join(out_dir, f"{safe_title}_{num}.sus")
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(sus)
-        print(f"wrote {out_path} ({len(chart.notes)} notes)")
+        print(f"  wrote {out_path} ({len(chart.notes)} notes)")
         written += 1
+    return written
 
-    if written == 0:
-        print("no charts (&inote_N) found in input", file=sys.stderr)
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Convert maimai simai charts (maidata.txt) to SUS format.")
+    parser.add_argument("input", help="maidata.txt file or a directory to scan")
+    parser.add_argument("-o", "--output", default=None,
+                        help="output directory (default: alongside each chart)")
+    parser.add_argument("--songid", default=None,
+                        help="override the generated #SONGID")
+    args = parser.parse_args(argv)
+
+    input_path = os.path.abspath(args.input)
+    if os.path.isdir(input_path):
+        paths = sorted(glob.glob(
+            os.path.join(input_path, "**", "maidata.txt"), recursive=True))
+        root = input_path
+    else:
+        paths = [input_path]
+        root = os.path.dirname(input_path)
+
+    if not paths:
+        print("no maidata.txt found", file=sys.stderr)
+        return 1
+
+    total = 0
+    for path in paths:
+        songdir = os.path.dirname(path)
+        if args.output:
+            out_dir = os.path.normpath(os.path.join(
+                os.path.abspath(args.output), os.path.relpath(songdir, root)))
+        else:
+            out_dir = songdir
+        total += process_song(path, out_dir, args.songid)
+
+    if total == 0:
+        print("no charts (&inote_N) found", file=sys.stderr)
         return 1
     return 0
 
