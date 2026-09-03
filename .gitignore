@@ -18,3 +18,622 @@ sus-io/
 *.mp4
 *.mkv
 *.mov
+CourseTrack1/j.png
+CourseTrack1/mas.ugc
+MajdataView-master/.gitattributes
+MajdataView-master/.gitignore
+MajdataView-master/.vsconfig
+MajdataView-master/ffmpeg-cli-param.txt
+MajdataView-master/LICENSE
+MajdataView-master/README.md
+MajdataView-master/UpgradeLog.htm
+MajdataView-master/.github/ISSUE_TEMPLATE/ISSUE_TEMPLATE_empty.md
+MajdataView-master/.github/ISSUE_TEMPLATE/ISSUE_TEMPLATE_en_us.md
+MajdataView-master/.github/ISSUE_TEMPLATE/ISSUE_TEMPLATE_new_feature.md
+MajdataView-master/.github/ISSUE_TEMPLATE/ISSUE_TEMPLATE_zh_cn.md
+MajdataView-master/.github/workflows/main.yml
+MajdataView-master/Assets/Addctive.mat
+MajdataView-master/Assets/Addctive.mat.meta
+MajdataView-master/Assets/AddictiveBall.mat
+MajdataView-master/Assets/AddictiveBall.mat.meta
+MajdataView-master/Assets/Animation.meta
+MajdataView-master/Assets/CircleHold.mat
+MajdataView-master/Assets/CircleHold.mat.meta
+MajdataView-master/Assets/CircleMiss.mat
+MajdataView-master/Assets/CircleMiss.mat.meta
+MajdataView-master/Assets/ColorAdjustEffect.shader
+MajdataView-master/Assets/ColorAdjustEffect.shader.meta
+MajdataView-master/Assets/Hanabi.mat
+MajdataView-master/Assets/Hanabi.mat.meta
+MajdataView-master/Assets/MaimaiColorEffect.shader
+MajdataView-master/Assets/MaimaiColorEffect.shader.meta
+MajdataView-master/Assets/Minimoon SDF.asset
+MajdataView-master/Assets/Minimoon SDF.asset.meta
+MajdataView-master/Assets/Minimoon.ttf
+MajdataView-master/Assets/Minimoon.ttf.meta
+MajdataView-master/Assets/NuGet.config
+MajdataView-master/Assets/NuGet.config.meta
+MajdataView-master/Assets/Plugins.meta
+MajdataView-master/Assets/Prefab.meta
+MajdataView-master/Assets/Scenes.meta
+MajdataView-master/Assets/Scripts.meta
+MajdataView-master/Assets/ShineMaterial.mat
+MajdataView-master/Assets/ShineMaterial.mat.meta
+MajdataView-master/Assets/SlidePrefab.meta
+MajdataView-master/Assets/Sprite.meta
+MajdataView-master/Assets/StreamingAssets.meta
+MajdataView-master/Assets/TextMesh Pro.meta
+MajdataView-master/Assets/UIs.meta
+MajdataView-master/Assets/Animation/breakEffect.anim
+MajdataView-master/Assets/Animation/breakEffect.anim.meta
+MajdataView-master/Assets/Animation/breakGdEffect.anim
+MajdataView-master/Assets/Animation/breakGdEffect.anim.meta
+MajdataView-master/Assets/Animation/breakGrEffect.anim
+MajdataView-master/Assets/Animation/breakGrEffect.anim.meta
+MajdataView-master/Assets/Animation/BreakShine.anim
+MajdataView-master/Assets/Animation/BreakShine.anim.meta
+MajdataView-master/Assets/Animation/BreakShine.controller
+MajdataView-master/Assets/Animation/BreakShine.controller.meta
+MajdataView-master/Assets/Animation/BreakStarOver.anim
+MajdataView-master/Assets/Animation/BreakStarOver.anim.meta
+MajdataView-master/Assets/Animation/Canvas.controller
+MajdataView-master/Assets/Animation/Canvas.controller.meta
+MajdataView-master/Assets/Animation/CanvasAllPerfect.controller
+MajdataView-master/Assets/Animation/CanvasAllPerfect.controller.meta
+MajdataView-master/Assets/Animation/Enter.anim
+MajdataView-master/Assets/Animation/Enter.anim.meta
+MajdataView-master/Assets/Animation/Entry.anim
+MajdataView-master/Assets/Animation/Entry.anim.meta
+MajdataView-master/Assets/Animation/Exit.anim
+MajdataView-master/Assets/Animation/Exit.anim.meta
+MajdataView-master/Assets/Animation/fire.anim
+MajdataView-master/Assets/Animation/fire.anim.meta
+MajdataView-master/Assets/Animation/Firework.controller
+MajdataView-master/Assets/Animation/Firework.controller.meta
+MajdataView-master/Assets/Animation/Good.controller
+MajdataView-master/Assets/Animation/Good.controller.meta
+MajdataView-master/Assets/Animation/goodEffect.anim
+MajdataView-master/Assets/Animation/goodEffect.anim.meta
+MajdataView-master/Assets/Animation/Great.controller
+MajdataView-master/Assets/Animation/Great.controller.meta
+MajdataView-master/Assets/Animation/greatEffect.anim
+MajdataView-master/Assets/Animation/greatEffect.anim.meta
+MajdataView-master/Assets/Animation/Hex.controller
+MajdataView-master/Assets/Animation/Hex.controller.meta
+MajdataView-master/Assets/Animation/HoldShine.anim
+MajdataView-master/Assets/Animation/HoldShine.anim.meta
+MajdataView-master/Assets/Animation/HoldShine.controller
+MajdataView-master/Assets/Animation/HoldShine.controller.meta
+MajdataView-master/Assets/Animation/JudgeBreak.anim
+MajdataView-master/Assets/Animation/JudgeBreak.anim.meta
+MajdataView-master/Assets/Animation/JudgeBreakShine.anim
+MajdataView-master/Assets/Animation/JudgeBreakShine.anim.meta
+MajdataView-master/Assets/Animation/JudgeBreakShine.controller
+MajdataView-master/Assets/Animation/JudgeBreakShine.controller.meta
+MajdataView-master/Assets/Animation/JudgeEffect.controller
+MajdataView-master/Assets/Animation/JudgeEffect.controller.meta
+MajdataView-master/Assets/Animation/JudgeIdle.anim
+MajdataView-master/Assets/Animation/JudgeIdle.anim.meta
+MajdataView-master/Assets/Animation/JudgePerfect.anim
+MajdataView-master/Assets/Animation/JudgePerfect.anim.meta
+MajdataView-master/Assets/Animation/Just_curv.controller
+MajdataView-master/Assets/Animation/Just_curv.controller.meta
+MajdataView-master/Assets/Animation/NoFire.anim
+MajdataView-master/Assets/Animation/NoFire.anim.meta
+MajdataView-master/Assets/Animation/over.anim
+MajdataView-master/Assets/Animation/over.anim.meta
+MajdataView-master/Assets/Animation/Showing.anim
+MajdataView-master/Assets/Animation/Showing.anim.meta
+MajdataView-master/Assets/Animation/SlideFadeIn.anim
+MajdataView-master/Assets/Animation/SlideFadeIn.anim.meta
+MajdataView-master/Assets/Animation/SlideFadeIn.controller
+MajdataView-master/Assets/Animation/SlideFadeIn.controller.meta
+MajdataView-master/Assets/Animation/StarOver.anim
+MajdataView-master/Assets/Animation/StarOver.anim.meta
+MajdataView-master/Assets/Animation/tapEffect.anim
+MajdataView-master/Assets/Animation/tapEffect.anim.meta
+MajdataView-master/Assets/Animation/touch.anim
+MajdataView-master/Assets/Animation/touch.anim.meta
+MajdataView-master/Assets/Animation/TouchEffect.controller
+MajdataView-master/Assets/Animation/TouchEffect.controller.meta
+MajdataView-master/Assets/Animation/TouchJudge.anim
+MajdataView-master/Assets/Animation/TouchJudge.anim.meta
+MajdataView-master/Assets/Animation/WifiFadeIn.anim
+MajdataView-master/Assets/Animation/WifiFadeIn.anim.meta
+MajdataView-master/Assets/Prefab/EachLine.prefab
+MajdataView-master/Assets/Prefab/EachLine.prefab.meta
+MajdataView-master/Assets/Prefab/Firework.prefab
+MajdataView-master/Assets/Prefab/Firework.prefab.meta
+MajdataView-master/Assets/Prefab/Gd_Effect.prefab
+MajdataView-master/Assets/Prefab/Gd_Effect.prefab.meta
+MajdataView-master/Assets/Prefab/Gr_Effect.prefab
+MajdataView-master/Assets/Prefab/Gr_Effect.prefab.meta
+MajdataView-master/Assets/Prefab/Hold_01.prefab
+MajdataView-master/Assets/Prefab/Hold_01.prefab.meta
+MajdataView-master/Assets/Prefab/Hold_Effect.prefab
+MajdataView-master/Assets/Prefab/Hold_Effect.prefab.meta
+MajdataView-master/Assets/Prefab/JudgeEffect.prefab
+MajdataView-master/Assets/Prefab/JudgeEffect.prefab.meta
+MajdataView-master/Assets/Prefab/Just_curv.prefab
+MajdataView-master/Assets/Prefab/Just_curv.prefab.meta
+MajdataView-master/Assets/Prefab/Just_str.prefab
+MajdataView-master/Assets/Prefab/Just_str.prefab.meta
+MajdataView-master/Assets/Prefab/Just_wifi.prefab
+MajdataView-master/Assets/Prefab/Just_wifi.prefab.meta
+MajdataView-master/Assets/Prefab/Star_01.prefab
+MajdataView-master/Assets/Prefab/Star_01.prefab.meta
+MajdataView-master/Assets/Prefab/Star_Slide.prefab
+MajdataView-master/Assets/Prefab/Star_Slide.prefab.meta
+MajdataView-master/Assets/Prefab/StarLIne.prefab
+MajdataView-master/Assets/Prefab/StarLIne.prefab.meta
+MajdataView-master/Assets/Prefab/Tap_01.prefab
+MajdataView-master/Assets/Prefab/Tap_01.prefab.meta
+MajdataView-master/Assets/Prefab/Tap_Effect.prefab
+MajdataView-master/Assets/Prefab/Tap_Effect.prefab.meta
+MajdataView-master/Assets/Prefab/TapLine.prefab
+MajdataView-master/Assets/Prefab/TapLine.prefab.meta
+MajdataView-master/Assets/Prefab/Touch.prefab
+MajdataView-master/Assets/Prefab/Touch.prefab.meta
+MajdataView-master/Assets/Prefab/TouchEffect.prefab
+MajdataView-master/Assets/Prefab/TouchEffect.prefab.meta
+MajdataView-master/Assets/Prefab/TouchHold.prefab
+MajdataView-master/Assets/Prefab/TouchHold.prefab.meta
+MajdataView-master/Assets/Scenes/SampleScene.unity
+MajdataView-master/Assets/Scenes/SampleScene.unity.meta
+MajdataView-master/Assets/Scenes/Server.unity
+MajdataView-master/Assets/Scenes/Server.unity.meta
+MajdataView-master/Assets/Scripts/AudioTimeProvider.cs
+MajdataView-master/Assets/Scripts/AudioTimeProvider.cs.meta
+MajdataView-master/Assets/Scripts/HttpHandler.cs
+MajdataView-master/Assets/Scripts/HttpHandler.cs.meta
+MajdataView-master/Assets/Scripts/Interfaces.meta
+MajdataView-master/Assets/Scripts/JsonDataLoader.cs
+MajdataView-master/Assets/Scripts/JsonDataLoader.cs.meta
+MajdataView-master/Assets/Scripts/JudgeArea.cs
+MajdataView-master/Assets/Scripts/JudgeArea.cs.meta
+MajdataView-master/Assets/Scripts/LoadJustSprite.cs
+MajdataView-master/Assets/Scripts/LoadJustSprite.cs.meta
+MajdataView-master/Assets/Scripts/Majson.cs
+MajdataView-master/Assets/Scripts/Majson.cs.meta
+MajdataView-master/Assets/Scripts/Misc.meta
+MajdataView-master/Assets/Scripts/Notes.meta
+MajdataView-master/Assets/Scripts/ScreenRecorder.cs
+MajdataView-master/Assets/Scripts/ScreenRecorder.cs.meta
+MajdataView-master/Assets/Scripts/Sensor.cs
+MajdataView-master/Assets/Scripts/Sensor.cs.meta
+MajdataView-master/Assets/Scripts/SensorManager.cs
+MajdataView-master/Assets/Scripts/SensorManager.cs.meta
+MajdataView-master/Assets/Scripts/Types.meta
+MajdataView-master/Assets/Scripts/UI.meta
+MajdataView-master/Assets/Scripts/Interfaces/IFlasher.cs
+MajdataView-master/Assets/Scripts/Interfaces/IFlasher.cs.meta
+MajdataView-master/Assets/Scripts/Interfaces/INote.cs
+MajdataView-master/Assets/Scripts/Interfaces/INote.cs.meta
+MajdataView-master/Assets/Scripts/Misc/DestroySelf.cs
+MajdataView-master/Assets/Scripts/Misc/DestroySelf.cs.meta
+MajdataView-master/Assets/Scripts/Misc/DontDestroyOnLoad.cs
+MajdataView-master/Assets/Scripts/Misc/DontDestroyOnLoad.cs.meta
+MajdataView-master/Assets/Scripts/Misc/InputManager.cs
+MajdataView-master/Assets/Scripts/Misc/InputManager.cs.meta
+MajdataView-master/Assets/Scripts/Misc/NoteManager.cs
+MajdataView-master/Assets/Scripts/Misc/NoteManager.cs.meta
+MajdataView-master/Assets/Scripts/Misc/PlayAllPerfect.cs
+MajdataView-master/Assets/Scripts/Misc/PlayAllPerfect.cs.meta
+MajdataView-master/Assets/Scripts/Misc/SpriteLoader.cs
+MajdataView-master/Assets/Scripts/Misc/SpriteLoader.cs.meta
+MajdataView-master/Assets/Scripts/Notes/BreakShineController.cs
+MajdataView-master/Assets/Scripts/Notes/BreakShineController.cs.meta
+MajdataView-master/Assets/Scripts/Notes/EachLineDrop.cs
+MajdataView-master/Assets/Scripts/Notes/EachLineDrop.cs.meta
+MajdataView-master/Assets/Scripts/Notes/HoldDrop.cs
+MajdataView-master/Assets/Scripts/Notes/HoldDrop.cs.meta
+MajdataView-master/Assets/Scripts/Notes/MultTouchHandler.cs
+MajdataView-master/Assets/Scripts/Notes/MultTouchHandler.cs.meta
+MajdataView-master/Assets/Scripts/Notes/NoteDrop.cs
+MajdataView-master/Assets/Scripts/Notes/NoteDrop.cs.meta
+MajdataView-master/Assets/Scripts/Notes/NoteEffectManager.cs
+MajdataView-master/Assets/Scripts/Notes/NoteEffectManager.cs.meta
+MajdataView-master/Assets/Scripts/Notes/SlideDrop.cs
+MajdataView-master/Assets/Scripts/Notes/SlideDrop.cs.meta
+MajdataView-master/Assets/Scripts/Notes/StarDrop.cs
+MajdataView-master/Assets/Scripts/Notes/StarDrop.cs.meta
+MajdataView-master/Assets/Scripts/Notes/TapBase.cs
+MajdataView-master/Assets/Scripts/Notes/TapBase.cs.meta
+MajdataView-master/Assets/Scripts/Notes/TapDrop.cs
+MajdataView-master/Assets/Scripts/Notes/TapDrop.cs.meta
+MajdataView-master/Assets/Scripts/Notes/TouchBase.cs
+MajdataView-master/Assets/Scripts/Notes/TouchBase.cs.meta
+MajdataView-master/Assets/Scripts/Notes/TouchDrop.cs
+MajdataView-master/Assets/Scripts/Notes/TouchDrop.cs.meta
+MajdataView-master/Assets/Scripts/Notes/TouchHoldDrop.cs
+MajdataView-master/Assets/Scripts/Notes/TouchHoldDrop.cs.meta
+MajdataView-master/Assets/Scripts/Notes/WifiDrop.cs
+MajdataView-master/Assets/Scripts/Notes/WifiDrop.cs.meta
+MajdataView-master/Assets/Scripts/Types/ConnSlideInfo.cs
+MajdataView-master/Assets/Scripts/Types/ConnSlideInfo.cs.meta
+MajdataView-master/Assets/Scripts/Types/Enums.cs
+MajdataView-master/Assets/Scripts/Types/Enums.cs.meta
+MajdataView-master/Assets/Scripts/Types/Input.cs
+MajdataView-master/Assets/Scripts/Types/Input.cs.meta
+MajdataView-master/Assets/Scripts/Types/NoteScore.cs
+MajdataView-master/Assets/Scripts/Types/NoteScore.cs.meta
+MajdataView-master/Assets/Scripts/Types/TouchGroup.cs
+MajdataView-master/Assets/Scripts/Types/TouchGroup.cs.meta
+MajdataView-master/Assets/Scripts/UI/BGManager.cs
+MajdataView-master/Assets/Scripts/UI/BGManager.cs.meta
+MajdataView-master/Assets/Scripts/UI/CustomSkin.cs
+MajdataView-master/Assets/Scripts/UI/CustomSkin.cs.meta
+MajdataView-master/Assets/Scripts/UI/Floating.cs
+MajdataView-master/Assets/Scripts/UI/Floating.cs.meta
+MajdataView-master/Assets/Scripts/UI/ObjectCounter.cs
+MajdataView-master/Assets/Scripts/UI/ObjectCounter.cs.meta
+MajdataView-master/Assets/Scripts/UI/TImeDisplayer.cs
+MajdataView-master/Assets/Scripts/UI/TImeDisplayer.cs.meta
+MajdataView-master/Assets/Scripts/UI/ToggleFullScreen.cs
+MajdataView-master/Assets/Scripts/UI/ToggleFullScreen.cs.meta
+MajdataView-master/Assets/SlidePrefab/Slide_Wifi.prefab
+MajdataView-master/Assets/SlidePrefab/Slide_Wifi.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Circle_1.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Circle_1.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Circle_2.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Circle_2.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Circle_3.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Circle_3.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Circle_4.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Circle_4.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Circle_5.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Circle_5.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Circle_6.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Circle_6.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Circle_7.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Circle_7.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Circle_8.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Circle_8.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_L_2.prefab
+MajdataView-master/Assets/SlidePrefab/Star_L_2.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_L_3.prefab
+MajdataView-master/Assets/SlidePrefab/Star_L_3.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_L_4.prefab
+MajdataView-master/Assets/SlidePrefab/Star_L_4.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_L_5.prefab
+MajdataView-master/Assets/SlidePrefab/Star_L_5.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Line_3.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Line_3.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Line_4.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Line_4.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Line_5.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Line_5.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Line_6.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Line_6.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_Line_7.prefab
+MajdataView-master/Assets/SlidePrefab/Star_Line_7.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_1.prefab
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_1.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_2.prefab
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_2.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_3.prefab
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_3.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_4.prefab
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_4.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_5.prefab
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_5.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_6.prefab
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_6.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_7.prefab
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_7.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_8.prefab
+MajdataView-master/Assets/SlidePrefab/Star_ppqq_8.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_pq_1.prefab
+MajdataView-master/Assets/SlidePrefab/Star_pq_1.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_pq_2.prefab
+MajdataView-master/Assets/SlidePrefab/Star_pq_2.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_pq_3.prefab
+MajdataView-master/Assets/SlidePrefab/Star_pq_3.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_pq_4.prefab
+MajdataView-master/Assets/SlidePrefab/Star_pq_4.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_pq_5.prefab
+MajdataView-master/Assets/SlidePrefab/Star_pq_5.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_pq_6.prefab
+MajdataView-master/Assets/SlidePrefab/Star_pq_6.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_pq_7.prefab
+MajdataView-master/Assets/SlidePrefab/Star_pq_7.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_pq_8.prefab
+MajdataView-master/Assets/SlidePrefab/Star_pq_8.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_S.prefab
+MajdataView-master/Assets/SlidePrefab/Star_S.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_V_1.prefab
+MajdataView-master/Assets/SlidePrefab/Star_V_1.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_V_2.prefab
+MajdataView-master/Assets/SlidePrefab/Star_V_2.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_V_3.prefab
+MajdataView-master/Assets/SlidePrefab/Star_V_3.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_V_4.prefab
+MajdataView-master/Assets/SlidePrefab/Star_V_4.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_V_6.prefab
+MajdataView-master/Assets/SlidePrefab/Star_V_6.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_V_7.prefab
+MajdataView-master/Assets/SlidePrefab/Star_V_7.prefab.meta
+MajdataView-master/Assets/SlidePrefab/Star_V_8.prefab
+MajdataView-master/Assets/SlidePrefab/Star_V_8.prefab.meta
+MajdataView-master/Assets/Sprite/baseline_password_black_48dp.png
+MajdataView-master/Assets/Sprite/baseline_password_black_48dp.png.meta
+MajdataView-master/Assets/Sprite/baseline_unfold_more_black_24dp.png
+MajdataView-master/Assets/Sprite/baseline_unfold_more_black_24dp.png.meta
+MajdataView-master/Assets/Sprite/Break.png
+MajdataView-master/Assets/Sprite/Break.png.meta
+MajdataView-master/Assets/Sprite/Circle.png
+MajdataView-master/Assets/Sprite/Circle.png.meta
+MajdataView-master/Assets/Sprite/CircleMask.png
+MajdataView-master/Assets/Sprite/CircleMask.png.meta
+MajdataView-master/Assets/Sprite/CircleMiss.png
+MajdataView-master/Assets/Sprite/CircleMiss.png.meta
+MajdataView-master/Assets/Sprite/ColorBall.png
+MajdataView-master/Assets/Sprite/ColorBall.png.meta
+MajdataView-master/Assets/Sprite/debug.meta
+MajdataView-master/Assets/Sprite/Default_Background.png
+MajdataView-master/Assets/Sprite/Default_Background.png.meta
+MajdataView-master/Assets/Sprite/Each.png
+MajdataView-master/Assets/Sprite/Each.png.meta
+MajdataView-master/Assets/Sprite/EachLine1.png
+MajdataView-master/Assets/Sprite/EachLine1.png.meta
+MajdataView-master/Assets/Sprite/EachLine2.png
+MajdataView-master/Assets/Sprite/EachLine2.png.meta
+MajdataView-master/Assets/Sprite/EachLine3.png
+MajdataView-master/Assets/Sprite/EachLine3.png.meta
+MajdataView-master/Assets/Sprite/EachLine4.png
+MajdataView-master/Assets/Sprite/EachLine4.png.meta
+MajdataView-master/Assets/Sprite/Firework_new.png
+MajdataView-master/Assets/Sprite/Firework_new.png.meta
+MajdataView-master/Assets/Sprite/Firework.png
+MajdataView-master/Assets/Sprite/Firework.png.meta
+MajdataView-master/Assets/Sprite/Good.png
+MajdataView-master/Assets/Sprite/Good.png.meta
+MajdataView-master/Assets/Sprite/Great.png
+MajdataView-master/Assets/Sprite/Great.png.meta
+MajdataView-master/Assets/Sprite/Hex.png
+MajdataView-master/Assets/Sprite/Hex.png.meta
+MajdataView-master/Assets/Sprite/HexBackup.png
+MajdataView-master/Assets/Sprite/HexBackup.png.meta
+MajdataView-master/Assets/Sprite/Hold_Break_End.png
+MajdataView-master/Assets/Sprite/Hold_Break_End.png.meta
+MajdataView-master/Assets/Sprite/Hold_Each_End.png
+MajdataView-master/Assets/Sprite/Hold_Each_End.png.meta
+MajdataView-master/Assets/Sprite/Hold_End.png
+MajdataView-master/Assets/Sprite/Hold_End.png.meta
+MajdataView-master/Assets/Sprite/Just_curv.png
+MajdataView-master/Assets/Sprite/Just_curv.png.meta
+MajdataView-master/Assets/Sprite/Just_str.png
+MajdataView-master/Assets/Sprite/Just_str.png.meta
+MajdataView-master/Assets/Sprite/Just_wifi.png
+MajdataView-master/Assets/Sprite/Just_wifi.png.meta
+MajdataView-master/Assets/Sprite/mask.png
+MajdataView-master/Assets/Sprite/mask.png.meta
+MajdataView-master/Assets/Sprite/Materials.meta
+MajdataView-master/Assets/Sprite/Normal.png
+MajdataView-master/Assets/Sprite/Normal.png.meta
+MajdataView-master/Assets/Sprite/outline_fullscreen_white_24dp.png
+MajdataView-master/Assets/Sprite/outline_fullscreen_white_24dp.png.meta
+MajdataView-master/Assets/Sprite/salt.png
+MajdataView-master/Assets/Sprite/salt.png.meta
+MajdataView-master/Assets/Sprite/Slide_01.png
+MajdataView-master/Assets/Sprite/Slide_01.png.meta
+MajdataView-master/Assets/Sprite/Slide.png
+MajdataView-master/Assets/Sprite/Slide.png.meta
+MajdataView-master/Assets/Sprite/star_green.png
+MajdataView-master/Assets/Sprite/star_green.png.meta
+MajdataView-master/Assets/Sprite/star_pink.png
+MajdataView-master/Assets/Sprite/star_pink.png.meta
+MajdataView-master/Assets/Sprite/Star.png
+MajdataView-master/Assets/Sprite/Star.png.meta
+MajdataView-master/Assets/Sprite/StarBackup.png
+MajdataView-master/Assets/Sprite/StarBackup.png.meta
+MajdataView-master/Assets/Sprite/StarWhite.png
+MajdataView-master/Assets/Sprite/StarWhite.png.meta
+MajdataView-master/Assets/Sprite/StarWhiteBackup.png
+MajdataView-master/Assets/Sprite/StarWhiteBackup.png.meta
+MajdataView-master/Assets/Sprite/Touch_01.png
+MajdataView-master/Assets/Sprite/Touch_01.png.meta
+MajdataView-master/Assets/Sprite/TouchBorder_02.png
+MajdataView-master/Assets/Sprite/TouchBorder_02.png.meta
+MajdataView-master/Assets/Sprite/TouchBorder_03.png
+MajdataView-master/Assets/Sprite/TouchBorder_03.png.meta
+MajdataView-master/Assets/Sprite/TouchEach_01.png
+MajdataView-master/Assets/Sprite/TouchEach_01.png.meta
+MajdataView-master/Assets/Sprite/TouchEachBorder_02.png
+MajdataView-master/Assets/Sprite/TouchEachBorder_02.png.meta
+MajdataView-master/Assets/Sprite/TouchEachBorder_03.png
+MajdataView-master/Assets/Sprite/TouchEachBorder_03.png.meta
+MajdataView-master/Assets/Sprite/TouchEachPoint.png
+MajdataView-master/Assets/Sprite/TouchEachPoint.png.meta
+MajdataView-master/Assets/Sprite/TouchEff.png
+MajdataView-master/Assets/Sprite/TouchEff.png.meta
+MajdataView-master/Assets/Sprite/TouchEffparts_01.png
+MajdataView-master/Assets/Sprite/TouchEffparts_01.png.meta
+MajdataView-master/Assets/Sprite/TouchEffparts_02.png
+MajdataView-master/Assets/Sprite/TouchEffparts_02.png.meta
+MajdataView-master/Assets/Sprite/TouchHold_01.png
+MajdataView-master/Assets/Sprite/TouchHold_01.png.meta
+MajdataView-master/Assets/Sprite/TouchHold_02.png
+MajdataView-master/Assets/Sprite/TouchHold_02.png.meta
+MajdataView-master/Assets/Sprite/TouchHold_03.png
+MajdataView-master/Assets/Sprite/TouchHold_03.png.meta
+MajdataView-master/Assets/Sprite/TouchHold_04.png
+MajdataView-master/Assets/Sprite/TouchHold_04.png.meta
+MajdataView-master/Assets/Sprite/TouchHold_Miss.png
+MajdataView-master/Assets/Sprite/TouchHold_Miss.png.meta
+MajdataView-master/Assets/Sprite/TouchHoldBorder.png
+MajdataView-master/Assets/Sprite/TouchHoldBorder.png.meta
+MajdataView-master/Assets/Sprite/TouchJust.png
+MajdataView-master/Assets/Sprite/TouchJust.png.meta
+MajdataView-master/Assets/Sprite/TouchPoint.png
+MajdataView-master/Assets/Sprite/TouchPoint.png.meta
+MajdataView-master/Assets/Sprite/wifi_break.png
+MajdataView-master/Assets/Sprite/wifi_break.png.meta
+MajdataView-master/Assets/Sprite/wifi_each.png
+MajdataView-master/Assets/Sprite/wifi_each.png.meta
+MajdataView-master/Assets/Sprite/wifi.png
+MajdataView-master/Assets/Sprite/wifi.png.meta
+MajdataView-master/Assets/Sprite/Materials/Circle.mat
+MajdataView-master/Assets/Sprite/Materials/Circle.mat.meta
+MajdataView-master/Assets/Sprite/Materials/CircleMiss.mat
+MajdataView-master/Assets/Sprite/Materials/CircleMiss.mat.meta
+MajdataView-master/Assets/Sprite/debug/outline.png
+MajdataView-master/Assets/Sprite/debug/outline.png.meta
+MajdataView-master/Assets/StreamingAssets/ffarguments.txt
+MajdataView-master/Assets/StreamingAssets/ffarguments.txt.meta
+MajdataView-master/Assets/StreamingAssets/ffmpeg.exe
+MajdataView-master/Assets/StreamingAssets/ffmpeg.exe.meta
+MajdataView-master/Assets/StreamingAssets/README.md
+MajdataView-master/Assets/StreamingAssets/README.md.meta
+MajdataView-master/Assets/TextMesh Pro/Documentation.meta
+MajdataView-master/Assets/TextMesh Pro/Fonts.meta
+MajdataView-master/Assets/TextMesh Pro/Resources.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders.meta
+MajdataView-master/Assets/TextMesh Pro/Sprites.meta
+MajdataView-master/Assets/TextMesh Pro/Documentation/TextMesh Pro User Guide 2016.pdf
+MajdataView-master/Assets/TextMesh Pro/Documentation/TextMesh Pro User Guide 2016.pdf.meta
+MajdataView-master/Assets/TextMesh Pro/Fonts/LiberationSans - OFL.txt
+MajdataView-master/Assets/TextMesh Pro/Fonts/LiberationSans - OFL.txt.meta
+MajdataView-master/Assets/TextMesh Pro/Fonts/LiberationSans.ttf
+MajdataView-master/Assets/TextMesh Pro/Fonts/LiberationSans.ttf.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/Fonts & Materials.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/LineBreaking Following Characters.txt
+MajdataView-master/Assets/TextMesh Pro/Resources/LineBreaking Following Characters.txt.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/LineBreaking Leading Characters.txt
+MajdataView-master/Assets/TextMesh Pro/Resources/LineBreaking Leading Characters.txt.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/Sprite Assets.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/Style Sheets.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/TMP Settings.asset
+MajdataView-master/Assets/TextMesh Pro/Resources/TMP Settings.asset.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Drop Shadow.mat
+MajdataView-master/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Drop Shadow.mat.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
+MajdataView-master/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Outline.mat
+MajdataView-master/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Outline.mat.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
+MajdataView-master/Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/Sprite Assets/EmojiOne.asset
+MajdataView-master/Assets/TextMesh Pro/Resources/Sprite Assets/EmojiOne.asset.meta
+MajdataView-master/Assets/TextMesh Pro/Resources/Style Sheets/Default Style Sheet.asset
+MajdataView-master/Assets/TextMesh Pro/Resources/Style Sheets/Default Style Sheet.asset.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/SDFFunctions.hlsl
+MajdataView-master/Assets/TextMesh Pro/Shaders/SDFFunctions.hlsl.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_Bitmap-Custom-Atlas.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_Bitmap-Custom-Atlas.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_Bitmap-Mobile.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_Bitmap-Mobile.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_Bitmap.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_Bitmap.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF Overlay.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF Overlay.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF SSD.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF SSD.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP LIT.shadergraph
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP LIT.shadergraph.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP UNLIT.shadergraph
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-HDRP UNLIT.shadergraph.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Masking.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Masking.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile SSD.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile SSD.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile-2-Pass.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile-2-Pass.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Surface-Mobile.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Surface-Mobile.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Surface.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-Surface.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-URP Lit.shadergraph
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-URP Lit.shadergraph.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-URP Unlit.shadergraph
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF-URP Unlit.shadergraph.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_SDF.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_Sprite.shader
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMP_Sprite.shader.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMPro_Mobile.cginc
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMPro_Mobile.cginc.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMPro_Properties.cginc
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMPro_Properties.cginc.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMPro_Surface.cginc
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMPro_Surface.cginc.meta
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMPro.cginc
+MajdataView-master/Assets/TextMesh Pro/Shaders/TMPro.cginc.meta
+MajdataView-master/Assets/TextMesh Pro/Sprites/EmojiOne Attribution.txt
+MajdataView-master/Assets/TextMesh Pro/Sprites/EmojiOne Attribution.txt.meta
+MajdataView-master/Assets/TextMesh Pro/Sprites/EmojiOne.json
+MajdataView-master/Assets/TextMesh Pro/Sprites/EmojiOne.json.meta
+MajdataView-master/Assets/TextMesh Pro/Sprites/EmojiOne.png
+MajdataView-master/Assets/TextMesh Pro/Sprites/EmojiOne.png.meta
+MajdataView-master/Assets/UIs/1080BG.png
+MajdataView-master/Assets/UIs/1080BG.png.meta
+MajdataView-master/Assets/UIs/1080Circle_Rev.png
+MajdataView-master/Assets/UIs/1080Circle_Rev.png.meta
+MajdataView-master/Assets/UIs/1080Circle_Shaped.png
+MajdataView-master/Assets/UIs/1080Circle_Shaped.png.meta
+MajdataView-master/Assets/UIs/1080Circle.png
+MajdataView-master/Assets/UIs/1080Circle.png.meta
+MajdataView-master/Assets/UIs/apbloom.png
+MajdataView-master/Assets/UIs/apbloom.png.meta
+MajdataView-master/Assets/UIs/bg_dummy.jpg
+MajdataView-master/Assets/UIs/bg_dummy.jpg.meta
+MajdataView-master/Assets/UIs/color.png
+MajdataView-master/Assets/UIs/color.png.meta
+MajdataView-master/Assets/UIs/JacketInfo.png
+MajdataView-master/Assets/UIs/JacketInfo.png.meta
+MajdataView-master/Packages/manifest.json
+MajdataView-master/Packages/packages-lock.json
+MajdataView-master/ProjectSettings/AudioManager.asset
+MajdataView-master/ProjectSettings/AutoStreamingSettings.asset
+MajdataView-master/ProjectSettings/BurstAotSettings_Android.json
+MajdataView-master/ProjectSettings/BurstAotSettings_StandaloneWindows.json
+MajdataView-master/ProjectSettings/ClusterInputManager.asset
+MajdataView-master/ProjectSettings/CommonBurstAotSettings.json
+MajdataView-master/ProjectSettings/DynamicsManager.asset
+MajdataView-master/ProjectSettings/EditorBuildSettings.asset
+MajdataView-master/ProjectSettings/EditorSettings.asset
+MajdataView-master/ProjectSettings/GraphicsSettings.asset
+MajdataView-master/ProjectSettings/InputManager.asset
+MajdataView-master/ProjectSettings/MemorySettings.asset
+MajdataView-master/ProjectSettings/MultiplayerManager.asset
+MajdataView-master/ProjectSettings/NavMeshAreas.asset
+MajdataView-master/ProjectSettings/NetworkManager.asset
+MajdataView-master/ProjectSettings/PackageManagerSettings.asset
+MajdataView-master/ProjectSettings/Physics2DSettings.asset
+MajdataView-master/ProjectSettings/PresetManager.asset
+MajdataView-master/ProjectSettings/ProjectSettings.asset
+MajdataView-master/ProjectSettings/ProjectVersion.txt
+MajdataView-master/ProjectSettings/QualitySettings.asset
+MajdataView-master/ProjectSettings/SceneTemplateSettings.json
+MajdataView-master/ProjectSettings/TagManager.asset
+MajdataView-master/ProjectSettings/TimelineSettings.asset
+MajdataView-master/ProjectSettings/TimeManager.asset
+MajdataView-master/ProjectSettings/UnityConnectSettings.asset
+MajdataView-master/ProjectSettings/VersionControlSettings.asset
+MajdataView-master/ProjectSettings/VFXManager.asset
+MajdataView-master/ProjectSettings/XRSettings.asset
+私は雨/an_0492_02.mp3
+私は雨/jacket_s_492.png
+私は雨/se_0492_01.mp3
+chart1/TEST_5.ugc
+chart1/337/鼓動_2.ugc
+chart1/337/鼓動_3.ugc
+chart1/337/鼓動_4.ugc
+chart1/337/鼓動_5.ugc
+chart1/337/bg.png
+chart1/337/track.mp3
+chart1/337/Untitled.mgxc
+chart1/LEVEL5-Judgelight/bg.jpg
+chart1/LEVEL5-Judgelight/LEVEL5-Judgelight-_5.ugc
+chart1/LEVEL5-Judgelight/track.mp3
+chart1/pandora paraboxxx/bg.png
+chart1/pandora paraboxxx/PANDORA_PARADOXXX_2.ugc
+chart1/pandora paraboxxx/PANDORA_PARADOXXX_3.ugc
+chart1/pandora paraboxxx/PANDORA_PARADOXXX_4.ugc
+chart1/pandora paraboxxx/PANDORA_PARADOXXX_5.ugc
+chart1/pandora paraboxxx/PANDORA_PARADOXXX_6.ugc
+chart1/pandora paraboxxx/track.mp3

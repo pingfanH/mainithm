@@ -1,30 +1,28 @@
 #!/usr/bin/env python3
-"""Convert maimai simai charts (maidata.txt) to SUS (Sliding Universal Score).
+"""Convert maimai simai charts (maidata.txt) to CHUNITHM UGC (or SUS).
 
 Format references
 -----------------
 * simai:  https://w.atwiki.jp/simai/ and the MaiConverter project in this repo.
+* UGC:    https://umgr.inonote.jp/en/ (CHUNITHM / Umiguri chart format)
 * SUS:    https://gist.github.com/kb10uy/c171c175ba913dc40a73c6ce69da9859
           and https://github.com/mkpoli/sus-io
 
 Usage
 -----
-    python3 simai_to_sus.py maidata.txt [-o OUT_DIR]   # one chart set
+    python3 simai_to_sus.py maidata.txt [-o OUT_DIR]   # one chart set -> .ugc
     python3 simai_to_sus.py songs_dir  [-o OUT_DIR]    # batch: scan every maidata.txt
+    python3 simai_to_sus.py maidata.txt --format sus   # emit .sus instead
 
-For each chart (``&inote_N``) it emits a ``.sus`` file with ``#TITLE``,
-``#ARTIST``, per-difficulty ``#DESIGNER`` (``&des_N``), ``#PLAYLEVEL``,
-``#DIFFICULTY``, ``#SONGID``, ``#WAVE`` and ``#JACKET``.
-
-* ``#SONGID`` is ``genreid + "p"`` when ``&genreid`` is set, otherwise a random
-  alphabetic string.
-* ``#WAVE`` / ``#JACKET`` point to the audio and cover image found next to the
-  maidata.txt (``track.*`` and ``bg.*`` / ``jacket.*`` by default).
+For each chart (``&inote_N``) it emits one ``.ugc`` file with ``@TITLE``,
+``@ARTIST``, ``@DESIGN``, ``@DIFF``, ``@LEVEL``, ``@SONGID``, ``@BGM`` and
+``@JACKET``.  ``@BGM`` / ``@JACKET`` point to the audio and cover image found
+next to the maidata.txt (``track.*`` and ``bg.*`` / ``jacket.*`` by default).
 
 Timing model
 ------------
 * simai measure 0.0 == the first beat of the chart.
-* SUS uses ``ticks_per_beat = 480`` and 4/4 bars, so one bar == 1920 ticks.
+* UGC/SUS use ``ticks_per_beat = 480`` and 4/4 bars, so one bar == 1920 ticks.
 
 Lane model
 ----------
@@ -34,13 +32,23 @@ between are left free for slide curve control points.  ``POSITION_TO_LANE`` and
 ``LANE_OFFSET`` below let you retune this if a particular player uses a
 different convention.
 
+Note type mapping
+-----------------
+UGC (default):
+* tap -> TAP (``t``); hold -> HOLD (``h``).
+* slide -> AIR-HOLD (``H``).
+* touch (C/B/E/A/D) -> FLICK (``f``).
+
+SUS (``--format sus``):
+* tap -> SUS tap (``1x``); hold -> SUS hold (``2xy``).
+* slide -> SUS slide 2 (``4xy``), rendered as an "air" note.
+* touch (C/B/E/A/D) -> SUS directional (``5x``, up), a "抬手" (raise-hand) air.
+
 Known limitations (documented on purpose)
 -----------------------------------------
 * break / EX / star visual variants collapse into ordinary taps.
-* touch notes (C/B/E/A/D) are projected onto the button lanes.
 * complex slide shapes (p/q/pp/qq/s/z/w) are approximated as polylines;
   straight ``-``, arc ``^<>`` and ``V``/``v`` slides are exact.
-* no directional/flick notes are produced (maimai has none).
 """
 
 from __future__ import annotations
@@ -50,6 +58,7 @@ import glob
 import math
 import os
 import random
+import shutil
 import string
 import sys
 from dataclasses import dataclass, field
@@ -90,6 +99,20 @@ def touch_lane(region: str, position: int) -> int:
     return button_lane(0)  # C/A/D fall back to the center lane
 
 
+# maimai 8-button layout (0-indexed position -> left/center/right column):
+#   1(0)  2(1)  3(2)
+#   4(3)        5(4)
+#   6(5)  7(6)  8(7)
+# CHUNITHM air notes only have 6 directions, so the two middle buttons map to
+# left/right and there is no pure "left"/"right" direction.
+AIR_HORIZONTAL = ["L", "C", "R", "L", "R", "L", "C", "R"]
+
+
+def air_direction(up: bool, position: int) -> str:
+    """CHUNITHM air direction code: ``U``/``D`` + ``L``/``C``/``R``."""
+    return ("U" if up else "D") + AIR_HORIZONTAL[position % 8]
+
+
 # --------------------------------------------------------------------------- #
 # Small helpers
 # --------------------------------------------------------------------------- #
@@ -108,6 +131,16 @@ def b36_fixed(n: int, width: int) -> str:
 
 def measure_to_tick(measure: float) -> int:
     return int(round(measure * TICKS_PER_MEASURE))
+
+
+def h36(n: int) -> str:
+    return B36[n % 36].upper()
+
+
+def measure_to_bar_tick(measure: float) -> Tuple[int, int]:
+    bar = int(measure)
+    tick = int(round((measure - bar) * TICKS_PER_MEASURE))
+    return bar, tick
 
 
 # --------------------------------------------------------------------------- #
@@ -222,14 +255,24 @@ def parse_maidata(text: str) -> Tuple[dict, Dict[str, str]]:
     return metadata, charts
 
 
-def parse_duration(s: str) -> Tuple[float, Optional[float]]:
-    """Parse a ``[den:num]`` / ``[eqbpm#den:num]`` duration.
+def parse_duration(s: str) -> Tuple[float, Optional[float], Optional[Tuple[float, float]]]:
+    """Parse a ``[den:num]`` / ``[eqbpm#den:num]`` / ``[prep##move]`` duration.
 
-    Returns ``(duration_in_measures, equivalent_bpm)``.
+    Returns ``(duration_in_measures, equivalent_bpm, seconds_pair)``.
+
+    * ``[den:num]`` -> ``(num/den, None, None)`` measures.
+    * ``[eqbpm#den:num]`` -> ``(num/den, eqbpm, None)``.
+    * ``[prep##move]`` -> ``(0.0, None, (prep, move))``, both in seconds.
     """
     if not s.startswith("["):
-        return 0.0, None
+        return 0.0, None, None
     inner = s.strip("[]")
+    if "##" in inner:
+        pre, _, post = inner.partition("##")
+        try:
+            return 0.0, None, (float(pre), float(post))
+        except ValueError:
+            return 0.0, None, None
     equivalent_bpm: Optional[float] = None
     if "#" in inner:
         pre, _, inner = inner.partition("#")
@@ -237,12 +280,12 @@ def parse_duration(s: str) -> Tuple[float, Optional[float]]:
             equivalent_bpm = float(pre)
     den_str, _, num_str = inner.partition(":")
     if not den_str or not num_str:
-        return 0.0, equivalent_bpm
+        return 0.0, equivalent_bpm, None
     den = float(den_str)
     num = float(num_str)
     if den <= 0:
-        return 0.0, equivalent_bpm
-    return num / den, equivalent_bpm
+        return 0.0, equivalent_bpm, None
+    return num / den, equivalent_bpm, None
 
 
 def parse_touch(s: str) -> dict:
@@ -259,7 +302,7 @@ def parse_touch(s: str) -> dict:
         i += 1
     duration = 0.0
     if i < len(s) and s[i] == "[":
-        duration, _ = parse_duration(s[i:])
+        duration, _, _ = parse_duration(s[i:])
     if is_hold:
         return {"type": "touch_hold", "region": region, "position": position,
                 "duration": duration}
@@ -292,8 +335,9 @@ def parse_slide(start: int, modifier: str, tail: str) -> List[dict]:
         i += 1
         duration = inherit_duration
         equivalent_bpm = None
+        seconds = None
         if i < len(seg) and seg[i] == "[":
-            duration, equivalent_bpm = parse_duration(seg[i:])
+            duration, equivalent_bpm, seconds = parse_duration(seg[i:])
         if duration is None:
             duration = 0.0
         inherit_duration = duration
@@ -305,6 +349,7 @@ def parse_slide(start: int, modifier: str, tail: str) -> List[dict]:
             "reflect": reflect,
             "duration": duration,
             "equivalent_bpm": equivalent_bpm,
+            "seconds": seconds,
             "modifier": modifier,
         })
     return slides
@@ -331,7 +376,7 @@ def parse_button_note(s: str) -> List[dict]:
     if is_hold:
         duration = 0.0
         if i < len(rest) and rest[i] == "[":
-            duration, _ = parse_duration(rest[i:])
+            duration, _, _ = parse_duration(rest[i:])
         if duration <= 0:
             return [{"type": "tap", "position": button}]  # hexagonal "tap"
         return [{"type": "hold", "position": button, "duration": duration}]
@@ -390,10 +435,9 @@ def parse_chart(chart_text: str, whole_bpm: Optional[float] = None) -> Chart:
     measure = 0.0
     divisor = 4.0
     for fragment in chart_text.split(","):
-        if fragment == "" or fragment == "E":
-            if fragment == "E":
-                break
-            continue
+        end_after = fragment.endswith("E")
+        if end_after:
+            fragment = fragment[:-1]
         for ev in parse_fragment(fragment):
             et = ev["type"]
             if et == "bpm":
@@ -409,13 +453,20 @@ def parse_chart(chart_text: str, whole_bpm: Optional[float] = None) -> Chart:
                 elif et == "slide":
                     duration = ev["duration"]
                     delay = SLIDE_DELAY
-                    eq_bpm = ev["equivalent_bpm"]
-                    if eq_bpm is not None:
+                    seconds = ev.get("seconds")
+                    if seconds is not None:
                         cur = chart.bpms[-1].value if chart.bpms else (
                             whole_bpm or 120.0)
-                        mult = cur / eq_bpm
-                        duration *= mult
-                        delay *= mult
+                        delay = seconds[0] * cur / 240.0
+                        duration = seconds[1] * cur / 240.0
+                    else:
+                        eq_bpm = ev["equivalent_bpm"]
+                        if eq_bpm is not None:
+                            cur = chart.bpms[-1].value if chart.bpms else (
+                                whole_bpm or 120.0)
+                            mult = cur / eq_bpm
+                            duration *= mult
+                            delay *= mult
                     chart.notes.append(Slide(
                         measure=m, start=ev["start"], end=ev["end"],
                         duration=duration, pattern=ev["pattern"], delay=delay,
@@ -427,6 +478,8 @@ def parse_chart(chart_text: str, whole_bpm: Optional[float] = None) -> Chart:
                 elif et == "touch_hold":
                     chart.notes.append(
                         TouchHold(m, ev["position"], ev["region"], ev["duration"]))
+        if end_after:
+            break
         measure += 1.0 / divisor
 
     if not chart.bpms:
@@ -540,14 +593,17 @@ def _emit_metadata(lines: List[str], metadata: dict, level: str, difficulty: int
         lines.append(f'#ARTIST "{artist}"')
     if designer:
         lines.append(f'#DESIGNER "{designer}"')
-    lines.append(f'#PLAYLEVEL "{level}"')
+    lines.append(f"#PLAYLEVEL {level}")
     lines.append(f"#DIFFICULTY {difficulty}")
     if songid:
         lines.append(f'#SONGID "{songid}"')
     if wave:
         lines.append(f'#WAVE "{wave}"')
+        lines.append("#WAVEOFFSET 0")
     if jacket:
         lines.append(f'#JACKET "{jacket}"')
+    lines.append("")
+    lines.append('#REQUEST "ticks_per_beat 480"')
     lines.append("")
     lines.append(f"#00002: {BAR_LENGTH:g}")
     lines.append("")
@@ -620,7 +676,7 @@ def chart_to_sus(chart: Chart, metadata: dict, level: str,
             add_raw(start_tick, info, f"1{b36(NOTE_WIDTH)}")
             add_raw(end_tick, info, f"2{b36(NOTE_WIDTH)}")
         else:
-            add_raw(measure_to_tick(touch.measure), f"1{b36(lane)}", f"1{b36(NOTE_WIDTH)}")
+            add_raw(measure_to_tick(touch.measure), f"5{b36(lane)}", f"1{b36(NOTE_WIDTH)}")
 
     # Slide channels are global: a slide's notes span several lanes but share
     # one channel, so any two overlapping slides must get distinct channels.
@@ -631,16 +687,16 @@ def chart_to_sus(chart: Chart, metadata: dict, level: str,
         end_tick = measure_to_tick(move_start + slide.duration)
         channel = b36(slide_provider.get(start_tick, end_tick))
 
-        add_raw(start_tick, f"3{b36(button_lane(slide.start))}{channel}", f"1{b36(NOTE_WIDTH)}")
+        add_raw(start_tick, f"4{b36(button_lane(slide.start))}{channel}", f"1{b36(NOTE_WIDTH)}")
 
         waypoints = slide_waypoints(slide)
         for progress, position in waypoints:
             if progress <= 0.0 or progress >= 1.0:
                 continue
             tick = measure_to_tick(move_start + progress * slide.duration)
-            add_raw(tick, f"3{b36(button_lane(position))}{channel}", f"3{b36(NOTE_WIDTH)}")
+            add_raw(tick, f"4{b36(button_lane(position))}{channel}", f"3{b36(NOTE_WIDTH)}")
 
-        add_raw(end_tick, f"3{b36(button_lane(slide.end))}{channel}", f"2{b36(NOTE_WIDTH)}")
+        add_raw(end_tick, f"4{b36(button_lane(slide.end))}{channel}", f"2{b36(NOTE_WIDTH)}")
 
     lines: List[str] = []
     _emit_metadata(lines, metadata, level, difficulty, songid, designer, wave, jacket)
@@ -664,10 +720,126 @@ def chart_to_sus(chart: Chart, metadata: dict, level: str,
             cells = snapped
             gcd = step
         parts = [cells.get(i, "00") for i in range(0, TICKS_PER_MEASURE, gcd)]
-        lines.append(f"#{measure:03d}{info}: {''.join(parts)}")
+        lines.append(f"#{b36_fixed(measure, 3)}{info}: {''.join(parts)}")
     lines.append("")
 
     return "\n".join(lines)
+
+
+# --------------------------------------------------------------------------- #
+# UGC writing (CHUNITHM / Umiguri)
+# --------------------------------------------------------------------------- #
+
+def _level_const(level: str) -> float:
+    s = str(level).replace("+", "").strip()
+    try:
+        return float(s)
+    except ValueError:
+        return 0.0
+
+
+def chart_to_ugc(chart: Chart, metadata: dict, level: str,
+                 difficulty: int, songid: Optional[str] = None,
+                 designer: str = "", wave: Optional[str] = None,
+                 jacket: Optional[str] = None) -> str:
+    """Render a chart as CHUNITHM UGC (Umiguri) text.
+
+    Note type mapping
+    -----------------
+    * tap -> TAP (``t``)
+    * hold -> HOLD (``h``)
+    * slide -> star head TAP + AIR (up) + AIR-HOLD on the startup beat, then
+      AIR (down) + SLIDE once the star starts moving (holdable ground slide).
+      The air direction (``U``/``D`` + ``L``/``C``/``R``) follows the button's
+      column on the maimai circle.
+    * touch (C/B/E/A/D) -> AIR (down, purple); direction follows the position.
+    """
+    title = metadata.get("title", "Untitled")
+    artist = metadata.get("artist", "")
+    const = _level_const(level)
+
+    lines: List[str] = []
+    lines.append("' Created with simai_to_ugc")
+    lines.append("@VER\t4")
+    lines.append(f"@TITLE\t{title}")
+    if artist:
+        lines.append(f"@ARTIST\t{artist}")
+    if designer:
+        lines.append(f"@DESIGN\t{designer}")
+    lines.append(f"@DIFF\t{difficulty}")
+    lines.append(f"@LEVEL\t{level}")
+    lines.append(f"@CONST\t{const:.5f}")
+    lines.append(f"@SONGID\t{songid or 'MuC-0'}")
+    if wave:
+        lines.append(f"@BGM\t{wave}")
+    if jacket:
+        lines.append(f"@JACKET\t{jacket}")
+    lines.append("@TICKS\t480")
+    lines.append("@BEAT\t0\t4\t4")
+    for bpm in chart.bpms:
+        bar, tick = measure_to_bar_tick(bpm.measure)
+        lines.append(f"@BPM\t{bar}'{tick}\t{bpm.value:.5f}")
+    lines.append("@MAINTIL\t0")
+    lines.append("@ENDHEAD")
+    lines.append("")
+
+    groups: List[Tuple[float, List[str]]] = []
+
+    def add_group(m: float, block: List[str]) -> None:
+        groups.append((m, block))
+
+    w = h36(NOTE_WIDTH)
+
+    for note in sorted(chart.notes, key=lambda n: n.measure):
+        if isinstance(note, Tap):
+            bar, tick = measure_to_bar_tick(note.measure)
+            cell = h36(button_lane(note.position))
+            add_group(note.measure, [f"#{bar}'{tick}:t{cell}{w}"])
+        elif isinstance(note, Hold):
+            bar, tick = measure_to_bar_tick(note.measure)
+            cell = h36(button_lane(note.position))
+            dur = measure_to_tick(note.duration)
+            block = [f"#{bar}'{tick}:h{cell}{w}"]
+            if dur > 0:
+                block.append(f"#{dur}>s")
+            add_group(note.measure, block)
+        elif isinstance(note, Slide):
+            sc = h36(button_lane(note.start))
+            ec = h36(button_lane(note.end))
+            up = air_direction(True, note.start)
+            down = air_direction(False, note.start)
+            d_ticks = measure_to_tick(note.delay)
+            m_ticks = measure_to_tick(note.duration)
+            # star head: tap + air up; startup beat: air hold (prepare delay)
+            bar, tick = measure_to_bar_tick(note.measure)
+            block = [f"#{bar}'{tick}:t{sc}{w}",
+                     f"#{bar}'{tick}:a{sc}{w}{up}N",
+                     f"#{bar}'{tick}:H{sc}{w}8"]
+            if d_ticks > 0:
+                block.append(f"#{d_ticks}>s")
+            add_group(note.measure, block)
+            # star: air down, then a holdable ground slide
+            star = note.measure + note.delay
+            bar, tick = measure_to_bar_tick(star)
+            block2 = [f"#{bar}'{tick}:a{sc}{w}{down}N", f"#{bar}'{tick}:s{sc}{w}"]
+            if m_ticks > 0:
+                block2.append(f"#{m_ticks}>s{ec}{w}")
+            add_group(star, block2)
+        elif isinstance(note, TouchTap):
+            bar, tick = measure_to_bar_tick(note.measure)
+            cell = h36(touch_lane(note.region, note.position))
+            down = air_direction(False, note.position)
+            add_group(note.measure, [f"#{bar}'{tick}:a{cell}{w}{down}N"])
+        elif isinstance(note, TouchHold):
+            bar, tick = measure_to_bar_tick(note.measure)
+            cell = h36(touch_lane(note.region, note.position))
+            down = air_direction(False, note.position)
+            add_group(note.measure, [f"#{bar}'{tick}:a{cell}{w}{down}N"])
+
+    for _, block in sorted(groups, key=lambda g: g[0]):
+        lines.extend(block)
+
+    return "\n".join(lines) + "\n"
 
 
 # --------------------------------------------------------------------------- #
@@ -719,8 +891,8 @@ def find_jacket(directory: str) -> Optional[str]:
 
 
 def process_song(path: str, out_dir: str,
-                 songid_override: Optional[str]) -> int:
-    with open(path, "r", encoding="utf-8") as f:
+                 songid_override: Optional[str], fmt: str = "ugc") -> int:
+    with open(path, "r", encoding="utf-8-sig") as f:
         text = f.read()
     metadata, charts = parse_maidata(text)
     songdir = os.path.dirname(os.path.abspath(path))
@@ -737,11 +909,21 @@ def process_song(path: str, out_dir: str,
 
     wave = find_wave(songdir)
     jacket = find_jacket(songdir)
-    wave_rel = os.path.relpath(os.path.join(songdir, wave), out_dir) if wave else None
-    jacket_rel = (os.path.relpath(os.path.join(songdir, jacket), out_dir)
-                  if jacket else None)
 
     os.makedirs(out_dir, exist_ok=True)
+
+    # Copy the audio / cover next to the generated .sus and reference them by
+    # bare filename so the output folder is self-contained.
+    for asset in (wave, jacket):
+        if not asset:
+            continue
+        src = os.path.join(songdir, asset)
+        dst = os.path.join(out_dir, asset)
+        if os.path.abspath(src) != os.path.abspath(dst):
+            shutil.copyfile(src, dst)
+    wave_name = os.path.basename(wave) if wave else None
+    jacket_name = os.path.basename(jacket) if jacket else None
+
     safe_title = "".join(c if c.isalnum() or c in "-_" else "_"
                          for c in title).strip("_") or "untitled"
 
@@ -749,16 +931,22 @@ def process_song(path: str, out_dir: str,
 
     written = 0
     designers = metadata.get("designers", {})
+    if fmt == "sus":
+        generator = chart_to_sus
+        ext = "sus"
+    else:
+        generator = chart_to_ugc
+        ext = "ugc"
     for num in sorted(charts, key=lambda k: int(k)):
         chart = parse_chart(charts[num], whole_bpm)
         level = metadata.get("levels", {}).get(num, "?")
         difficulty = DIFFICULTY_BY_INDEX.get(num, 4)
         designer = designers.get(num) or designers.get("0") or ""
-        sus = chart_to_sus(chart, metadata, level, difficulty, songid=songid,
-                           designer=designer, wave=wave_rel, jacket=jacket_rel)
-        out_path = os.path.join(out_dir, f"{safe_title}_{num}.sus")
+        out_text = generator(chart, metadata, level, difficulty, songid=songid,
+                             designer=designer, wave=wave_name, jacket=jacket_name)
+        out_path = os.path.join(out_dir, f"{safe_title}_{num}.{ext}")
         with open(out_path, "w", encoding="utf-8") as f:
-            f.write(sus)
+            f.write(out_text)
         print(f"  wrote {out_path} ({len(chart.notes)} notes)")
         written += 1
     return written
@@ -766,12 +954,15 @@ def process_song(path: str, out_dir: str,
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Convert maimai simai charts (maidata.txt) to SUS format.")
+        description="Convert maimai simai charts (maidata.txt) to CHUNITHM UGC "
+                    "or SUS format.")
     parser.add_argument("input", help="maidata.txt file or a directory to scan")
     parser.add_argument("-o", "--output", default=None,
                         help="output directory (default: alongside each chart)")
     parser.add_argument("--songid", default=None,
                         help="override the generated #SONGID")
+    parser.add_argument("--format", choices=["ugc", "sus"], default="ugc",
+                        help="output format (default: ugc)")
     args = parser.parse_args(argv)
 
     input_path = os.path.abspath(args.input)
@@ -795,7 +986,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                 os.path.abspath(args.output), os.path.relpath(songdir, root)))
         else:
             out_dir = songdir
-        total += process_song(path, out_dir, args.songid)
+        total += process_song(path, out_dir, args.songid, args.format)
 
     if total == 0:
         print("no charts (&inote_N) found", file=sys.stderr)
