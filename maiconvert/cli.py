@@ -16,7 +16,7 @@ from .ugc import chart_to_ugc
 from .model import map_level
 
 DIFFICULTY_BY_INDEX = {
-    "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 4, "7": 4,
+    "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 5, "7": 6,
 }
 
 AUDIO_EXTS = {".mp3", ".wav", ".ogg", ".flac", ".m4a", ".aac", ".opus"}
@@ -28,11 +28,11 @@ JACKET_NAMES = ["bg.png", "bg.jpg", "bg.jpeg", "jacket.png", "jacket.jpg",
 
 
 def generate_songid(metadata: dict) -> str:
-    """Build a #SONGID: ``genreid`` + ``p`` when present, else random letters."""
-    genreid = (metadata.get("genreid") or "").strip()
-    if genreid:
-        return f"{genreid}p"
-    return "".join(random.choice(string.ascii_uppercase) for _ in range(8))
+    """Build a #SONGID: ``&shortid`` (or ``105``) + a random suffix."""
+    shortid = (metadata.get("shortid") or "").strip()
+    base = shortid if shortid else "105"
+    suffix = "".join(random.choice(string.ascii_uppercase) for _ in range(4))
+    return f"{base}{suffix}"
 
 
 def _find_file(directory: str, preferred: List[str],

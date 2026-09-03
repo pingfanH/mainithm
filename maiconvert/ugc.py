@@ -64,6 +64,13 @@ def _region_height(region: str) -> int:
     return TOUCH_REGION_HEIGHT.get(region, 3)
 
 
+def _touch_cell(region: str, position: int) -> str:
+    """Touch cell, clamped so ``cell + width`` stays within the 16 lanes."""
+    width = int(AIR_CRUSH_WIDTH)
+    cell = min(touch_lane(region, position), 16 - width)
+    return h36(cell)
+
+
 def _touch_color_map(chart: Chart) -> Dict[int, str]:
     """Assign an air-crush color to each touch note.
 
@@ -171,7 +178,7 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
             add_group(star, block2)
         elif isinstance(note, TouchTap):
             bar, tick = measure_to_bar_tick(note.measure)
-            cell = h36(touch_lane(note.region, note.position))
+            cell = _touch_cell(note.region, note.position)
             color = touch_colors[id(note)]
             height = _air_height(_region_height(note.region))
             crush = (f"C{cell}{AIR_CRUSH_WIDTH}{height}{color},"
@@ -182,13 +189,24 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
             ])
         elif isinstance(note, TouchHold):
             bar, tick = measure_to_bar_tick(note.measure)
-            cell = h36(touch_lane(note.region, note.position))
+            cell = _touch_cell(note.region, note.position)
+            color = touch_colors[id(note)]
             height = _air_height(_region_height(note.region))
             dur = measure_to_tick(note.duration)
-            block = [f"#{bar}'{tick}:H{cell}{AIR_CRUSH_WIDTH}{height}N"]
+            # AIR-HOLD (the hold) at the start
+            block = [f"#{bar}'{tick}:H{cell}{AIR_CRUSH_WIDTH}N"]
             if dur > 0:
                 block.append(f"#{dur}>s")
             add_group(note.measure, block)
+            # AIR-CRUSH (the shake) at the end, like the touch tap
+            end = note.measure + note.duration
+            bar2, tick2 = measure_to_bar_tick(end)
+            crush = (f"C{cell}{AIR_CRUSH_WIDTH}{height}{color},"
+                     f"{AIR_CRUSH_INTERVAL}")
+            add_group(end, [
+                f"#{bar2}'{tick2}:{crush}",
+                f"#{AIR_CRUSH_TAP_TICKS}>c{cell}{AIR_CRUSH_WIDTH}{height}",
+            ])
 
     for _, block in sorted(groups, key=lambda g: g[0]):
         lines.extend(block)

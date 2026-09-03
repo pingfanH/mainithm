@@ -51,6 +51,8 @@ def parse_maidata(text: str) -> Tuple[dict, Dict[str, str]]:
                 current_chart = num
             elif key in ("&genreid", "&genre"):
                 metadata["genreid"] = value
+            elif key == "&shortid":
+                metadata["shortid"] = value
             elif key == "&freemsg":
                 metadata["freemsg"] = value
         elif current_chart is not None and line:
@@ -60,13 +62,14 @@ def parse_maidata(text: str) -> Tuple[dict, Dict[str, str]]:
 
 
 def parse_duration(s: str) -> Tuple[float, Optional[float], Optional[Tuple[float, float]]]:
-    """Parse a ``[den:num]`` / ``[eqbpm#den:num]`` / ``[prep##move]`` duration.
+    """Parse a ``[den:num]`` / ``[eqbpm#den:num]`` / ``[prep##move]`` / ``[#sec]`` duration.
 
-    Returns ``(duration_in_measures, equivalent_bpm, seconds_pair)``.
+    Returns ``(duration_in_measures, equivalent_bpm, seconds)``.
 
     * ``[den:num]`` -> ``(num/den, None, None)`` measures.
     * ``[eqbpm#den:num]`` -> ``(num/den, eqbpm, None)``.
     * ``[prep##move]`` -> ``(0.0, None, (prep, move))``, both in seconds.
+    * ``[#sec]`` -> ``(0.0, None, sec)``, a float of seconds.
     """
     if not s.startswith("["):
         return 0.0, None, None
@@ -76,6 +79,12 @@ def parse_duration(s: str) -> Tuple[float, Optional[float], Optional[Tuple[float
         pre, _, post = inner.partition("##")
         try:
             return 0.0, None, (float(pre), float(post))
+        except ValueError:
+            return 0.0, None, None
+    if inner.startswith("#"):
+        # [#sec] = an absolute duration in seconds
+        try:
+            return 0.0, None, float(inner[1:])
         except ValueError:
             return 0.0, None, None
     equivalent_bpm: Optional[float] = None
@@ -106,11 +115,12 @@ def parse_touch(s: str) -> dict:
             is_hold = True
         i += 1
     duration = 0.0
+    seconds = None
     if i < len(s) and s[i] == "[":
-        duration, _, _ = parse_duration(s[i:])
+        duration, _, seconds = parse_duration(s[i:])
     if is_hold:
         return {"type": "touch_hold", "region": region, "position": position,
-                "duration": duration}
+                "duration": duration, "seconds": seconds}
     return {"type": "touch_tap", "region": region, "position": position}
 
 
@@ -118,7 +128,9 @@ def parse_slide(start: int, modifier: str, tail: str) -> List[dict]:
     """Parse a slide (and its chained ``*`` segments).
 
     ``*`` segments are "shared head" slides: they share the first segment's
-    star head, so they are marked ``headless``.
+    star head, so they are marked ``headless``.  A single slide body may carry
+    several ``slideType KEY`` segments (``1>2-5[2:1]``), which collapse into one
+    slide from the head to the last segment's end.
     """
     slides: List[dict] = []
     segments = tail.split("*")
@@ -142,6 +154,19 @@ def parse_slide(start: int, modifier: str, tail: str) -> List[dict]:
             continue  # unknown pattern
         end = int(seg[i]) - 1
         i += 1
+        # collapse further ``slideType KEY`` segments (e.g. ``-5`` in ``1>2-5``)
+        while i < len(seg) and seg[i] in "-^<>szvwpqV":
+            sp = seg[i]
+            j = i + 1
+            if sp in "pq" and j < len(seg) and seg[j] in "pq":
+                j += 1
+            elif sp == "V":
+                j += 1  # skip the reflect key
+            if j < len(seg) and seg[j].isdigit():
+                end = int(seg[j]) - 1
+                i = j + 1
+            else:
+                break
         seg_modifier = modifier
         while i < len(seg) and seg[i] in MODIFIER_CHARS:
             seg_modifier += seg[i]
@@ -194,11 +219,13 @@ def parse_button_note(s: str) -> List[dict]:
 
     if is_hold:
         duration = 0.0
+        seconds = None
         if i < len(rest) and rest[i] == "[":
-            duration, _, _ = parse_duration(rest[i:])
-        if duration <= 0:
+            duration, _, seconds = parse_duration(rest[i:])
+        if duration <= 0 and seconds is None:
             return [{"type": "tap", "position": button}]  # hexagonal "tap"
-        return [{"type": "hold", "position": button, "duration": duration}]
+        return [{"type": "hold", "position": button, "duration": duration,
+                 "seconds": seconds}]
 
     if i < len(rest) and rest[i] in "-^<>szvwpqV":
         return parse_slide(button, modifier, rest[i:])
@@ -284,7 +311,13 @@ def parse_chart(chart_text: str, whole_bpm: Optional[float] = None) -> Chart:
                 if et == "tap":
                     chart.notes.append(Tap(m, ev["position"]))
                 elif et == "hold":
-                    chart.notes.append(Hold(m, ev["position"], ev["duration"]))
+                    duration = ev["duration"]
+                    seconds = ev.get("seconds")
+                    if seconds is not None and not isinstance(seconds, tuple):
+                        cur = chart.bpms[-1].value if chart.bpms else (
+                            whole_bpm or 120.0)
+                        duration = seconds * cur / 240.0
+                    chart.notes.append(Hold(m, ev["position"], duration))
                 elif et == "slide":
                     duration = ev["duration"]
                     delay = SLIDE_DELAY
@@ -292,8 +325,12 @@ def parse_chart(chart_text: str, whole_bpm: Optional[float] = None) -> Chart:
                     if seconds is not None:
                         cur = chart.bpms[-1].value if chart.bpms else (
                             whole_bpm or 120.0)
-                        delay = seconds[0] * cur / 240.0
-                        duration = seconds[1] * cur / 240.0
+                        if isinstance(seconds, tuple):
+                            delay = seconds[0] * cur / 240.0
+                            duration = seconds[1] * cur / 240.0
+                        else:
+                            # [#sec] -> move duration, keep default delay
+                            duration = seconds * cur / 240.0
                     else:
                         eq_bpm = ev["equivalent_bpm"]
                         if eq_bpm is not None:
@@ -312,8 +349,14 @@ def parse_chart(chart_text: str, whole_bpm: Optional[float] = None) -> Chart:
                 elif et == "touch_tap":
                     chart.notes.append(TouchTap(m, ev["position"], ev["region"]))
                 elif et == "touch_hold":
+                    duration = ev["duration"]
+                    seconds = ev.get("seconds")
+                    if seconds is not None and not isinstance(seconds, tuple):
+                        cur = chart.bpms[-1].value if chart.bpms else (
+                            whole_bpm or 120.0)
+                        duration = seconds * cur / 240.0
                     chart.notes.append(
-                        TouchHold(m, ev["position"], ev["region"], ev["duration"]))
+                        TouchHold(m, ev["position"], ev["region"], duration))
         if end_after:
             break
         measure += 1.0 / divisor
