@@ -11,6 +11,7 @@ from .model import (
     Tap,
     TouchHold,
     TouchTap,
+    b36_fixed,
     button_lane,
     h36,
     measure_to_bar_tick,
@@ -18,12 +19,21 @@ from .model import (
     touch_lane,
 )
 
-# AIR-CRUSH encoding for touch notes: the "purple air" that needs a shake.
+# AIR-CRUSH encoding for touch taps: the "purple air" that needs a shake.
 # `C{x}{w}{hh}{c},{interval}` + `#OffsetTick:c{x}{w}{hh}`.
 AIR_CRUSH_WIDTH = "4"        # note width
-AIR_CRUSH_HEIGHT = "28"      # default height (C2S 5 -> UGC "28")
 AIR_CRUSH_INTERVAL = "240"   # shake interval in ticks (0.5 beat)
 AIR_CRUSH_TAP_TICKS = 480    # shake length for a touch tap (1 beat)
+
+# maimai touch region -> air height (C2S 1..5).  The region sits on a different
+# band of the touch screen, so give each a different air height.
+TOUCH_REGION_HEIGHT = {
+    "A": 5,  # top
+    "B": 3,  # button ring
+    "C": 3,  # center point
+    "D": 1,  # bottom
+    "E": 4,  # center ring
+}
 
 # Color assignment, mirroring maimai: a single touch is purple, and each touch
 # in a simultaneous chord gets a distinct color.
@@ -43,6 +53,15 @@ AIR_CRUSH_CHORD_COLORS = [
     "C",  # white
     "D",  # black
 ]
+
+
+def _air_height(c2s_height: int) -> str:
+    """Encode a C2S air height (1..5) as a 2-char UGC height."""
+    return b36_fixed((c2s_height - 1) * 2 * 10, 2).upper()
+
+
+def _region_height(region: str) -> int:
+    return TOUCH_REGION_HEIGHT.get(region, 3)
 
 
 def _touch_color_map(chart: Chart) -> Dict[int, str]:
@@ -154,22 +173,21 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
             bar, tick = measure_to_bar_tick(note.measure)
             cell = h36(touch_lane(note.region, note.position))
             color = touch_colors[id(note)]
-            crush = (f"C{cell}{AIR_CRUSH_WIDTH}{AIR_CRUSH_HEIGHT}{color},"
+            height = _air_height(_region_height(note.region))
+            crush = (f"C{cell}{AIR_CRUSH_WIDTH}{height}{color},"
                      f"{AIR_CRUSH_INTERVAL}")
             add_group(note.measure, [
                 f"#{bar}'{tick}:{crush}",
-                f"#{AIR_CRUSH_TAP_TICKS}>c{cell}{AIR_CRUSH_WIDTH}{AIR_CRUSH_HEIGHT}",
+                f"#{AIR_CRUSH_TAP_TICKS}>c{cell}{AIR_CRUSH_WIDTH}{height}",
             ])
         elif isinstance(note, TouchHold):
             bar, tick = measure_to_bar_tick(note.measure)
             cell = h36(touch_lane(note.region, note.position))
-            color = touch_colors[id(note)]
-            crush = (f"C{cell}{AIR_CRUSH_WIDTH}{AIR_CRUSH_HEIGHT}{color},"
-                     f"{AIR_CRUSH_INTERVAL}")
+            height = _air_height(_region_height(note.region))
             dur = measure_to_tick(note.duration)
-            block = [f"#{bar}'{tick}:{crush}"]
+            block = [f"#{bar}'{tick}:H{cell}{AIR_CRUSH_WIDTH}{height}N"]
             if dur > 0:
-                block.append(f"#{dur}>c{cell}{AIR_CRUSH_WIDTH}{AIR_CRUSH_HEIGHT}")
+                block.append(f"#{dur}>s")
             add_group(note.measure, block)
 
     for _, block in sorted(groups, key=lambda g: g[0]):
