@@ -14,20 +14,7 @@ sus-io/
 # Generated chart output
 *.sus
 
-# Media assets (audio / video / image) - large and usually copyrighted
-*.mp3
-*.wav
-*.ogg
-*.flac
-*.m4a
-*.aac
-*.opus
+# Video assets (promo / background videos)
 *.mp4
 *.mkv
 *.mov
-*.png
-*.jpg
-*.jpeg
-*.webp
-*.gif
-*.bmp
