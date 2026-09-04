@@ -139,7 +139,8 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
     lines.append(f"@DIFF\t{difficulty}")
     lines.append(f"@LEVEL\t{level}")
     lines.append("@CONST\t0.00000")
-    lines.append(f"@SONGID\t{songid or 'MuC-0'}")
+    if songid:
+        lines.append(f"@SONGID\t{songid}")
     if wave:
         lines.append(f"@BGM\t{wave}")
     if jacket:
@@ -215,10 +216,12 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
             bar, tick = measure_to_bar_tick(note.measure)
             cell = _touch_cell(note.region, note.position)
             color = touch_colors[id(note)]
-            height = _air_height(_region_height(note.region))
             dur = measure_to_tick(note.duration)
-            # AIR-HOLD (the hold) at the start
-            block = [f"#{bar}'{tick}:H{cell}{AIR_CRUSH_WIDTH}N"]
+            # AIR-HOLD (the hold) at the start.  An air note needs a ground
+            # note as its parent to display, so emit a TAP on the same cell
+            # right before the AIR-HOLD.
+            block = [f"#{bar}'{tick}:t{cell}{AIR_CRUSH_WIDTH}",
+                     f"#{bar}'{tick}:H{cell}{AIR_CRUSH_WIDTH}N"]
             if dur > 0:
                 block.append(f"#{dur}>s")
             add_group(note.measure, block)

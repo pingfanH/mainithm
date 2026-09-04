@@ -16,7 +16,7 @@ from .ugc import chart_to_ugc
 from .model import map_level
 
 DIFFICULTY_BY_INDEX = {
-    "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 5, "7": 6,
+    "1": 0, "2": 1, "3": 2, "4": 2, "5": 3, "6": 5, "7": 6,
 }
 
 AUDIO_EXTS = {".mp3", ".wav", ".ogg", ".flac", ".m4a", ".aac", ".opus"}
@@ -27,10 +27,16 @@ JACKET_NAMES = ["bg.png", "bg.jpg", "bg.jpeg", "jacket.png", "jacket.jpg",
                 "cover.png", "cover.jpg"]
 
 
-def generate_songid(metadata: dict) -> str:
-    """Build a #SONGID: ``&shortid`` (or ``105``) + a random suffix."""
+def generate_songid(metadata: dict, random_suffix: bool = True) -> str:
+    """Build a #SONGID: ``&shortid`` (or ``105``) + a random suffix.
+
+    ``random_suffix`` disabled -> return just the base id without the random
+    suffix (used with ``--skip-random-id``).
+    """
     shortid = (metadata.get("shortid") or "").strip()
     base = shortid if shortid else "105"
+    if not random_suffix:
+        return base
     suffix = "".join(random.choice(string.ascii_uppercase) for _ in range(4))
     return f"{base}{suffix}"
 
@@ -61,13 +67,20 @@ def find_jacket(directory: str) -> Optional[str]:
 
 def process_song(path: str, out_dir: str,
                  songid_override: Optional[str], fmt: str = "ugc",
-                 touch_multi_height: bool = False) -> int:
+                 touch_multi_height: bool = False,
+                 no_songid: bool = False,
+                 skip_random_id: bool = False,
+                 title_prefix: str = "",
+                 title_suffix: str = "") -> int:
     with open(path, "r", encoding="utf-8-sig") as f:
         text = f.read()
     metadata, charts = parse_maidata(text)
     songdir = os.path.dirname(os.path.abspath(path))
 
     title = metadata.get("title", "untitled")
+    if title_prefix or title_suffix:
+        title = f"{title_prefix}{title}{title_suffix}"
+        metadata["title"] = title
     whole_bpm = None
     if metadata.get("wholebpm"):
         try:
@@ -75,7 +88,13 @@ def process_song(path: str, out_dir: str,
         except ValueError:
             whole_bpm = None
 
-    songid = songid_override or generate_songid(metadata)
+    if songid_override:
+        songid = songid_override
+    elif no_songid:
+        songid = None
+    else:
+        songid = generate_songid(metadata,
+                                 random_suffix=not skip_random_id)
 
     wave = find_wave(songdir)
     jacket = find_jacket(songdir)
@@ -138,12 +157,21 @@ def main(argv: Optional[List[str]] = None) -> int:
                         help="output directory (default: alongside each chart)")
     parser.add_argument("--songid", default=None,
                         help="override the generated #SONGID")
+    parser.add_argument("--no-songid", action="store_true",
+                        help="do not generate / emit a #SONGID at all")
+    parser.add_argument("--skip-random-id", action="store_true",
+                        help="generate the songid without the random suffix "
+                             "(base id only)")
     parser.add_argument("--format", choices=["ugc", "sus"], default="ugc",
                         help="output format (default: ugc)")
     parser.add_argument("--touch-multi-height", action="store_true",
                         help="render each touch as several crushes at the base "
                              "height and its neighbours (H-1/H/H+1), each with "
                              "its own 踩音 (UGC only)")
+    parser.add_argument("--title-prefix", default="",
+                        help="prepend a string to the song title")
+    parser.add_argument("--title-suffix", default="",
+                        help="append a string to the song title")
     args = parser.parse_args(argv)
 
     input_path = os.path.abspath(args.input)
@@ -168,7 +196,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         else:
             out_dir = songdir
         total += process_song(path, out_dir, args.songid, args.format,
-                           touch_multi_height=args.touch_multi_height)
+                           touch_multi_height=args.touch_multi_height,
+                           no_songid=args.no_songid,
+                           skip_random_id=args.skip_random_id,
+                           title_prefix=args.title_prefix,
+                           title_suffix=args.title_suffix)
 
     if total == 0:
         print("no charts (&inote_N) found", file=sys.stderr)
