@@ -22,18 +22,8 @@ from .model import (
 # AIR-CRUSH encoding for touch taps: the "purple air" that needs a shake.
 # `C{x}{w}{hh}{c},{interval}` + `#OffsetTick:c{x}{w}{hh}`.
 AIR_CRUSH_WIDTH = "4"        # note width
-AIR_CRUSH_INTERVAL = "240"   # shake interval in ticks (0.5 beat)
+AIR_CRUSH_INTERVAL = "$"     # $ = continuous crush to end (a single solid aircrush)
 AIR_CRUSH_TAP_TICKS = 480    # shake length for a touch tap (1 beat)
-
-# maimai touch region -> air height (C2S 1..5).  The region sits on a different
-# band of the touch screen, so give each a different air height.
-TOUCH_REGION_HEIGHT = {
-    "A": 5,  # top
-    "B": 3,  # button ring
-    "C": 3,  # center point
-    "D": 1,  # bottom
-    "E": 4,  # center ring
-}
 
 # Color assignment, mirroring maimai: a single touch is purple, and each touch
 # in a simultaneous chord gets a distinct color.
@@ -53,6 +43,16 @@ AIR_CRUSH_CHORD_COLORS = [
     "C",  # white
     "D",  # black
 ]
+
+# maimai touch region -> air height (C2S 1..5).  The region sits on a different
+# band of the touch screen, so give each a different air height.
+TOUCH_REGION_HEIGHT = {
+    "A": 5,  # top
+    "B": 3,  # button ring
+    "C": 3,  # center point
+    "D": 1,  # bottom
+    "E": 4,  # center ring
+}
 
 
 def _air_height(c2s_height: int) -> str:
@@ -105,6 +105,7 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
       the star starts moving (holdable ground slide).
     * touch (C/B/E/A/D) -> AIR-CRUSH (``C``, the "purple air" that shakes).
       A single touch is purple; simultaneous touches get distinct colors.
+      touch hold -> AIR-HOLD at the start + AIR-CRUSH at the end.
     """
     title = metadata.get("title", "Untitled")
     artist = metadata.get("artist", "")
@@ -148,7 +149,10 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
         if isinstance(note, Tap):
             bar, tick = measure_to_bar_tick(note.measure)
             cell = h36(button_lane(note.position))
-            add_group(note.measure, [f"#{bar}'{tick}:t{cell}{w}"])
+            if note.ex:
+                add_group(note.measure, [f"#{bar}'{tick}:x{cell}{w}U"])
+            else:
+                add_group(note.measure, [f"#{bar}'{tick}:t{cell}{w}"])
         elif isinstance(note, Hold):
             bar, tick = measure_to_bar_tick(note.measure)
             cell = h36(button_lane(note.position))

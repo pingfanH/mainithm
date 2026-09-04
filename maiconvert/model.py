@@ -109,6 +109,7 @@ def map_level(level: str) -> str:
 class Tap:
     measure: float
     position: int
+    ex: bool = False
 
 
 @dataclass

@@ -223,14 +223,16 @@ def parse_button_note(s: str) -> List[dict]:
         if i < len(rest) and rest[i] == "[":
             duration, _, seconds = parse_duration(rest[i:])
         if duration <= 0 and seconds is None:
-            return [{"type": "tap", "position": button}]  # hexagonal "tap"
+            return [{"type": "tap", "position": button,
+                     "ex": ("x" in modifier or "b" in modifier)}]  # hexagonal "tap"
         return [{"type": "hold", "position": button, "duration": duration,
                  "seconds": seconds}]
 
     if i < len(rest) and rest[i] in "-^<>szvwpqV":
         return parse_slide(button, modifier, rest[i:])
 
-    return [{"type": "tap", "position": button}]
+    return [{"type": "tap", "position": button,
+             "ex": ("x" in modifier or "b" in modifier)}]
 
 
 def parse_note(s: str) -> List[dict]:
@@ -309,7 +311,7 @@ def parse_chart(chart_text: str, whole_bpm: Optional[float] = None) -> Chart:
             else:
                 m = measure
                 if et == "tap":
-                    chart.notes.append(Tap(m, ev["position"]))
+                    chart.notes.append(Tap(m, ev["position"], ev.get("ex", False)))
                 elif et == "hold":
                     duration = ev["duration"]
                     seconds = ev.get("seconds")
