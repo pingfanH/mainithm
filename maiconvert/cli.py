@@ -60,7 +60,8 @@ def find_jacket(directory: str) -> Optional[str]:
 
 
 def process_song(path: str, out_dir: str,
-                 songid_override: Optional[str], fmt: str = "ugc") -> int:
+                 songid_override: Optional[str], fmt: str = "ugc",
+                 touch_multi_height: bool = False) -> int:
     with open(path, "r", encoding="utf-8-sig") as f:
         text = f.read()
     metadata, charts = parse_maidata(text)
@@ -111,8 +112,15 @@ def process_song(path: str, out_dir: str,
         level = map_level(metadata.get("levels", {}).get(num, "?"))
         difficulty = DIFFICULTY_BY_INDEX.get(num, 4)
         designer = designers.get(num) or designers.get("0") or ""
-        out_text = generator(chart, metadata, level, difficulty, songid=songid,
-                             designer=designer, wave=wave_name, jacket=jacket_name)
+        if fmt == "ugc":
+            out_text = generator(chart, metadata, level, difficulty,
+                                 songid=songid, designer=designer,
+                                 wave=wave_name, jacket=jacket_name,
+                                 touch_multi_height=touch_multi_height)
+        else:
+            out_text = generator(chart, metadata, level, difficulty,
+                                 songid=songid, designer=designer,
+                                 wave=wave_name, jacket=jacket_name)
         out_path = os.path.join(out_dir, f"{safe_title}_{num}.{ext}")
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(out_text)
@@ -132,6 +140,10 @@ def main(argv: Optional[List[str]] = None) -> int:
                         help="override the generated #SONGID")
     parser.add_argument("--format", choices=["ugc", "sus"], default="ugc",
                         help="output format (default: ugc)")
+    parser.add_argument("--touch-multi-height", action="store_true",
+                        help="render each touch as several crushes at the base "
+                             "height and its neighbours (H-1/H/H+1), each with "
+                             "its own 踩音 (UGC only)")
     args = parser.parse_args(argv)
 
     input_path = os.path.abspath(args.input)
@@ -155,7 +167,8 @@ def main(argv: Optional[List[str]] = None) -> int:
                 os.path.abspath(args.output), os.path.relpath(songdir, root)))
         else:
             out_dir = songdir
-        total += process_song(path, out_dir, args.songid, args.format)
+        total += process_song(path, out_dir, args.songid, args.format,
+                           touch_multi_height=args.touch_multi_height)
 
     if total == 0:
         print("no charts (&inote_N) found", file=sys.stderr)

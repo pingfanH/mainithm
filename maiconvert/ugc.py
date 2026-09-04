@@ -71,6 +71,20 @@ def _touch_cell(region: str, position: int) -> str:
     return h36(cell)
 
 
+def _touch_crush_heights(region: str, multi_height: bool) -> List[int]:
+    """C2S heights (1..5) for a touch's crush(es).
+
+    Normal mapping -> a single crush at the region's base height.
+    ``multi_height`` -> the base height and its two neighbours (H-1, H, H+1),
+    clamped to the valid 1..5 range, so the touch renders as several crushes at
+    different heights sharing the same 踩音.
+    """
+    base = _region_height(region)
+    if not multi_height:
+        return [base]
+    return sorted({max(1, min(5, base + d)) for d in (-1, 0, 1)})
+
+
 def _touch_color_map(chart: Chart) -> Dict[int, str]:
     """Assign an air-crush color to each touch note.
 
@@ -94,7 +108,8 @@ def _touch_color_map(chart: Chart) -> Dict[int, str]:
 def chart_to_ugc(chart: Chart, metadata: dict, level: str,
                  difficulty: int, songid: Optional[str] = None,
                  designer: str = "", wave: Optional[str] = None,
-                 jacket: Optional[str] = None) -> str:
+                 jacket: Optional[str] = None,
+                 touch_multi_height: bool = False) -> str:
     """Render a chart as CHUNITHM UGC (Umiguri) text.
 
     Note type mapping
@@ -106,6 +121,8 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
     * touch (C/B/E/A/D) -> AIR-CRUSH (``C``, the "purple air" that shakes).
       A single touch is purple; simultaneous touches get distinct colors.
       touch hold -> AIR-HOLD at the start + AIR-CRUSH at the end.
+      ``touch_multi_height`` -> each touch emits several crushes at the base
+      height and its neighbours (H-1/H/H+1), each with its own 踩音.
     """
     title = metadata.get("title", "Untitled")
     artist = metadata.get("artist", "")
@@ -184,13 +201,16 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
             bar, tick = measure_to_bar_tick(note.measure)
             cell = _touch_cell(note.region, note.position)
             color = touch_colors[id(note)]
-            height = _air_height(_region_height(note.region))
-            crush = (f"C{cell}{AIR_CRUSH_WIDTH}{height}{color},"
-                     f"{AIR_CRUSH_INTERVAL}")
-            add_group(note.measure, [
-                f"#{bar}'{tick}:{crush}",
-                f"#{AIR_CRUSH_TAP_TICKS}>c{cell}{AIR_CRUSH_WIDTH}{height}",
-            ])
+            block = []
+            for h in _touch_crush_heights(note.region, touch_multi_height):
+                height = _air_height(h)
+                crush = (f"C{cell}{AIR_CRUSH_WIDTH}{height}{color},"
+                         f"{AIR_CRUSH_INTERVAL}")
+                block.extend([
+                    f"#{bar}'{tick}:{crush}",
+                    f"#{AIR_CRUSH_TAP_TICKS}>c{cell}{AIR_CRUSH_WIDTH}{height}",
+                ])
+            add_group(note.measure, block)
         elif isinstance(note, TouchHold):
             bar, tick = measure_to_bar_tick(note.measure)
             cell = _touch_cell(note.region, note.position)
@@ -205,12 +225,16 @@ def chart_to_ugc(chart: Chart, metadata: dict, level: str,
             # AIR-CRUSH (the shake) at the end, like the touch tap
             end = note.measure + note.duration
             bar2, tick2 = measure_to_bar_tick(end)
-            crush = (f"C{cell}{AIR_CRUSH_WIDTH}{height}{color},"
-                     f"{AIR_CRUSH_INTERVAL}")
-            add_group(end, [
-                f"#{bar2}'{tick2}:{crush}",
-                f"#{AIR_CRUSH_TAP_TICKS}>c{cell}{AIR_CRUSH_WIDTH}{height}",
-            ])
+            block = []
+            for h in _touch_crush_heights(note.region, touch_multi_height):
+                height = _air_height(h)
+                crush = (f"C{cell}{AIR_CRUSH_WIDTH}{height}{color},"
+                         f"{AIR_CRUSH_INTERVAL}")
+                block.extend([
+                    f"#{bar2}'{tick2}:{crush}",
+                    f"#{AIR_CRUSH_TAP_TICKS}>c{cell}{AIR_CRUSH_WIDTH}{height}",
+                ])
+            add_group(end, block)
 
     for _, block in sorted(groups, key=lambda g: g[0]):
         lines.extend(block)
